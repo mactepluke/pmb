@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "USER")
 @ToString(of = {"userId", "email", "firstName", "lastName", "verified"})
@@ -42,5 +45,26 @@ public class User {
     @Getter
     @Setter
     private boolean verified = false;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "RECIPIENT_ID")
+    @Getter
+    @Setter
+    @ToString.Exclude
+    private List<Recipient> recipients = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "SPOT_ACCOUNT_ID")
+    @Getter
+    @Setter
+    @ToString.Exclude
+    private List<SpotAccount> spotAccounts = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "BANK_ACCOUNT_ID")
+    @Getter
+    @Setter
+    @ToString.Exclude
+    private List<BankAccount> bankAccounts = new ArrayList<>();
 
 }

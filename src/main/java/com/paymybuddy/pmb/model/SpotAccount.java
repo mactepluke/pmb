@@ -25,4 +25,10 @@ public class SpotAccount {
     @Getter
     @Setter
     private float credit;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_ID")
+    @Getter
+    @Setter
+    private User user;
 }

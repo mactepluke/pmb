@@ -48,4 +48,10 @@ public class Payment {
     @Setter
     private boolean processed;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "RECIPIENT_ID")
+    @Getter
+    @Setter
+    private Recipient recipient;
+
 }

@@ -31,4 +31,10 @@ public class BankAccount {
     @Setter
     private float verified;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_ID")
+    @Getter
+    @Setter
+    private User user;
+
 }
