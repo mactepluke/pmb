@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "BANK_ACCOUNT")
-@ToString(of = {"bankAccountId", "name", "iban", "verified"})
+@ToString
 public class BankAccount {
 
     @Id

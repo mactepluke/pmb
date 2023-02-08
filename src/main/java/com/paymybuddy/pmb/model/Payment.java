@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "PAYMENT")
-@ToString(of = {"paymentId", "description", "grossAmount", "netAmount", "feePercent", "dateTime", "processed"})
+@ToString
 public class Payment {
 
     @Id

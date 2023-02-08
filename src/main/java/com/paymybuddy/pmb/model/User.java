@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "USER")
-@ToString(of = {"userId", "email", "firstName", "lastName", "verified"})
+@ToString
 public class User {
 
     private static final String DEFAULT_VALUE = "unknown";
