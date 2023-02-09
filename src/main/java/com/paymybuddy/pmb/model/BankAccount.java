@@ -35,6 +35,6 @@ public class BankAccount {
     @JoinColumn(name = "USER_ID")
     @Getter
     @Setter
-    private User user;
+    private PmbUser pmbUser;
 
 }

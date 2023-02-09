@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "USER")
 @ToString
-public class User {
+public class PmbUser {
 
     private static final String DEFAULT_VALUE = "unknown";
 
