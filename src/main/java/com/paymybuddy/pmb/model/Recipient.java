@@ -19,6 +19,11 @@ public class Recipient {
     @Getter
     private Integer recipientId;
 
+    @Column(name = "ENABLED")
+    @Getter
+    @Setter
+    private boolean enabled = false;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "PAYMENT_ID")
     @Getter

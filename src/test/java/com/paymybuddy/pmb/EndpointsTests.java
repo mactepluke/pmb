@@ -45,18 +45,16 @@ class EndpointsTests {
     @BeforeAll
     void setUp() {
 
-
         testPmbUser = new PmbUser();
-
         testPmbUser.setEmail("john.doe@aol.com");
         testPmbUser.setPassword("toto95");
 
-        log.info("*** STARTING ENDPOINTS TESTS ***");
+        log.info("*** STARTING USER ENDPOINTS TESTS ***");
     }
 
     @AfterAll
     void tearDown() {
-        log.info("*** ENDPOINTS TESTS FINISHED ***");
+        log.info("*** USER ENDPOINTS TESTS FINISHED ***");
     }
 
     @Test
@@ -72,7 +70,6 @@ class EndpointsTests {
 
         mockMvc.perform(post("/pmbuser?email=" + testPmbUser.getEmail() + "&password=" + testPmbUser.getPassword()))
                 .andExpect(status().isCreated());
-        // TODO gérer les cas où la création est null, en vérifiant le type de retour de la requête save finale et en la répercutant
     }
 
 }
