@@ -37,8 +37,8 @@ public class PmbUserController {
         HttpStatus status;
         PmbUser pmbUser = null;
 
-        if (email.isEmpty() || password.length() < 6 || password.length() > 20 || email.length() > 20 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error("Invalid post request: email format must be correct and max characters, and password must be between 6-20 characters.");
+        if (email.isEmpty() || password.length() < 6 || password.length() > 20 || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
+            log.error("Invalid post request: email format must be correct and max 40 characters, and password must be between 6-20 characters.");
             status = BAD_REQUEST;
         } else {
             email = email.toLowerCase();

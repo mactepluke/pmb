@@ -1,11 +1,13 @@
 package com.paymybuddy.pmb.configuration;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -33,47 +35,37 @@ public class SecurityConfig {
     @Value("${role}")
     private String role;
 
-    @Value("${web.cors.allowed-origins}")
-    private String allowedOrigins;
+    @Value("#{'${web.cors.allowed-origins}'.split(',')}")
+    private List<String> allowedOrigins;
     @Value("#{'${web.cors.allowed-methods}'.split(',')}")
     private List<String> allowedMethods;
-    @Value("${web.cors.max-age}")
-    private int maxAge;
-    @Value("${web.cors.allowed-headers}")
+    @Value("#{'${web.cors.allowed-headers}'.split(',')}")
     private List<String> allowedHeaders;
-    @Value("${web.cors.exposed-headers}")
-    private String exposedHeaders;
-
-//    private final BasicAuthConfigProperties basicAuth;
-//
-//    public SecurityConfiguration(BasicAuthConfigProperties basicAuth) {
-//        this.basicAuth = basicAuth;
-//    }
-
-//    @Bean
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.cors();
-//    }
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(Customizer.withDefaults()) // by default use a bean by the name of corsConfigurationSource
+        http    // by default use a bean by the name of corsConfigurationSource
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
-                        .anyRequest().authenticated())
-                .httpBasic(withDefaults());
-        http.csrf().disable();
+                        .anyRequest()
+                        .authenticated()
+                        )
+                .httpBasic(withDefaults())
+                .csrf().disable();
         return http.build();
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource()   {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
+
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(allowedMethods);
-        configuration.setAllowedHeaders(List.of("Authorization"));
+        configuration.setAllowedHeaders(allowedHeaders);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
@@ -91,21 +83,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-/*
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Requestor-Type"));
-        configuration.setExposedHeaders(Arrays.asList("X-Get-Header"));
-        configuration.setMaxAge(3600L);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-*/
 
 }
