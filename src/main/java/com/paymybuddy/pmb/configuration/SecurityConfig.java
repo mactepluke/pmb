@@ -50,14 +50,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .anyRequest()
                         .authenticated()
-                        )
+                )
                 .httpBasic(withDefaults())
                 .csrf().disable();
         return http.build();
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource()   {
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(allowedOrigins);

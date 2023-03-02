@@ -6,6 +6,7 @@ import com.paymybuddy.pmb.service.IPmbUserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,6 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @Log4j2
 @RestController
 @RequestMapping("/pmbuser")
-//@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:8080"}, allowCredentials = "true", allowedHeaders = {"Requestor-Type", "Authorization"})
 public class PmbUserController {
 
     private static final String EMAIL_REGEX_PATTERN = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
@@ -29,9 +29,8 @@ public class PmbUserController {
         this.pmbUserService = pmbUserService;
     }
 
-    //http://localhost:8080/pmbuser?email=<email>&password=<password>
-    @PostMapping
-//    @CrossOrigin(exposedHeaders = "X-Post-Header")
+    //http://localhost:8080/pmbuser/create?email=<email>&password=<password>
+    @PostMapping("/create")
     public ResponseEntity<PmbUser> create(@RequestParam String email, @RequestParam String password) {
 
         HttpStatus status;
@@ -64,5 +63,4 @@ public class PmbUserController {
         log.debug("Get request successful.");
 
     }
-
 }
