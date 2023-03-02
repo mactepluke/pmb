@@ -9,4 +9,6 @@ public interface IPmbUserService {
     List<PmbUser> getUsers();
 
     PmbUser create(String email, String password);
+
+    PmbUser getUser(String email);
 }

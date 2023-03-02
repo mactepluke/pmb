@@ -42,4 +42,10 @@ public class PmbUserService implements IPmbUserService {
         }
         return pmbUser;
     }
+
+    @Override
+    public PmbUser getUser(String email) {
+        return pmbUserRepository.findByEmail(email);
+    }
+
 }
