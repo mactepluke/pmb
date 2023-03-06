@@ -1,15 +1,14 @@
 package com.paymybuddy.pmb.controller;
 
 import com.paymybuddy.pmb.model.PmbUser;
-import com.paymybuddy.pmb.service.IBankAccountService;
 import com.paymybuddy.pmb.service.IPmbUserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.paymybuddy.pmb.controller.PmbControllerConstants.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Log4j2
@@ -17,8 +16,7 @@ import static org.springframework.http.HttpStatus.*;
 @RequestMapping("/pmbuser")
 public class PmbUserController {
 
-    private static final String EMAIL_REGEX_PATTERN = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-            + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+
 
     private final IPmbUserService pmbUserService;
 
@@ -35,7 +33,7 @@ public class PmbUserController {
         PmbUser pmbUser = null;
 
         if (email.isEmpty() || password.length() < 6 || password.length() > 20 || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error("Invalid post request: email format must be correct and max 40 characters, and password must be between 6-20 characters.");
+            log.error(INVALID_USER_CREDENTIALS);
             status = BAD_REQUEST;
         } else {
             email = email.toLowerCase();
@@ -62,7 +60,7 @@ public class PmbUserController {
         PmbUser pmbUser = null;
 
         if (email.isEmpty() || password.length() < 6 || password.length() > 20 || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error("Invalid post request: email format must be correct and max 40 characters, and password must be between 6-20 characters.");
+            log.error(INVALID_USER_CREDENTIALS);
             status = BAD_REQUEST;
         } else {
             email = email.toLowerCase();
@@ -89,8 +87,38 @@ public class PmbUserController {
         return new ResponseEntity<>(pmbUser, status);
     }
 
+    //http://localhost:8080/pmbuser/find/<email>
+    @GetMapping("/find/{email}")
+    public ResponseEntity<PmbUser> find(@PathVariable String email) {
+
+        HttpStatus status;
+        PmbUser pmbUser = null;
+
+        if (email.isEmpty() || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
+            log.error(INVALID_EMAIL);
+            status = BAD_REQUEST;
+        } else {
+            email = email.toLowerCase();
+
+            log.info("Get request received with email:{}", email);
+
+            pmbUser = pmbUserService.getUser(email);
+
+            if (pmbUser == null) {
+                log.error("No user found with email:{}", email);
+                status = NO_CONTENT;
+            } else {
+                    log.debug("Get request successful.");
+                    status = OK;
+            }
+        }
+
+        return new ResponseEntity<>(pmbUser, status);
+    }
+
+    //http://localhost:8080/pmbuser/update?email=<email>&item=<item>
     @PutMapping("/update")
-    public ResponseEntity<PmbUser> update(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<PmbUser> update(@RequestParam String email, @RequestParam String item) {
 //TODO écrire un premier paramètre de type enum pour le type de paramètre à updater ?
         HttpStatus status;
         PmbUser pmbUser = null;

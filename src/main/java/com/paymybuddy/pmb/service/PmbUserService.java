@@ -21,16 +21,10 @@ public class PmbUserService implements IPmbUserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<PmbUser> getUsers()    {
-        return pmbUserRepository.findAll();
-    }
-
-    @Override
     @Transactional
     public PmbUser create(String email, String password) {
 
-        PmbUser pmbUser = pmbUserRepository.findByEmail(email);
+        PmbUser pmbUser = getUser(email);
 
         if (pmbUser == null)    {
             pmbUser = new PmbUser();
@@ -44,6 +38,7 @@ public class PmbUserService implements IPmbUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PmbUser getUser(String email) {
         return pmbUserRepository.findByEmail(email);
     }
