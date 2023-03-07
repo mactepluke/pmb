@@ -1,6 +1,5 @@
 package com.paymybuddy.pmb.controller;
 
-import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.ISpotAccountService;
 import lombok.extern.log4j.Log4j2;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 import static org.springframework.http.HttpStatus.*;
-import static com.paymybuddy.pmb.controller.PmbControllerConstants.*;
+import static com.paymybuddy.pmb.controller.ControllerConstants.*;
 
 @Log4j2
 @RestController
@@ -39,12 +38,12 @@ public class SpotAccountController {
         } else {
             email = email.toLowerCase();
 
-            log.info("Post request received with email:{}, currency:{}", email, currency);
+            log.info("Create request received with email: {}, currency: {}", email, currency);
 
             spotAccount = spotAccountService.create(email, currency);
 
             if (spotAccount == null) {
-                log.error("User does not exists with email:{}", email);
+                log.error("User does not exists with email: {}", email);
                 status = NOT_ACCEPTABLE;
             } else {
                 log.info("Spot account created with id: {}", (spotAccount.getSpotAccountId() == null ? "<no_id>" : spotAccount.getSpotAccountId()));
@@ -67,15 +66,15 @@ public class SpotAccountController {
         } else {
             email = email.toLowerCase();
 
-            log.info("Get request received with email:{}", email);
+            log.info("Get request received with email: {}", email);
 
             spotAccounts = spotAccountService.findAll(email);
 
-            if (spotAccounts == null) {
-                log.error("No spot accounts found with email:{}", email);
+            if (spotAccounts.isEmpty()) {
+                log.error("No spot accounts found with email: {}", email);
                 status = NO_CONTENT;
             } else {
-                log.debug("Get request successful.");
+                log.info("Find All request successful.");
                 status = OK;
             }
         }

@@ -8,15 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.paymybuddy.pmb.controller.PmbControllerConstants.*;
+import static com.paymybuddy.pmb.controller.ControllerConstants.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Log4j2
 @RestController
 @RequestMapping("/pmbuser")
 public class PmbUserController {
-
-
 
     private final IPmbUserService pmbUserService;
 
@@ -38,12 +36,12 @@ public class PmbUserController {
         } else {
             email = email.toLowerCase();
 
-            log.info("Post request received with email:{}, password:{}", email, password.replaceAll(".", "*"));
+            log.info("Create request received with email: {}, password: {}", email, password.replaceAll(".", "*"));
 
             pmbUser = pmbUserService.create(email, password);
 
             if (pmbUser == null) {
-                log.error("User already exists with email:{}", email);
+                log.error("User already exists with email: {}", email);
                 status = NOT_ACCEPTABLE;
             } else {
                 log.info("User created with id: {}", (pmbUser.getUserId() == null ? "<no_id>" : pmbUser.getUserId()));
@@ -65,19 +63,19 @@ public class PmbUserController {
         } else {
             email = email.toLowerCase();
 
-            log.info("Get request received with email:{}", email);
+            log.info("Get request received with email: {}", email);
 
             pmbUser = pmbUserService.getUser(email);
 
             if (pmbUser == null) {
-                log.error("No user found with email:{}", email);
+                log.error("No user found with email: {}", email);
                 status = NO_CONTENT;
             } else {
                 if (pmbUser.getPassword().equals(password)) {
-                    log.debug("Get request successful.");
+                    log.info("Login request successful.");
                     status = OK;
                 } else {
-                    log.debug("Invalid password.");
+                    log.error("Invalid password.");
                     status = UNAUTHORIZED;
                     pmbUser = null;
                 }
@@ -100,15 +98,15 @@ public class PmbUserController {
         } else {
             email = email.toLowerCase();
 
-            log.info("Get request received with email:{}", email);
+            log.info("Get request received with email: {}", email);
 
             pmbUser = pmbUserService.getUser(email);
 
             if (pmbUser == null) {
-                log.error("No user found with email:{}", email);
+                log.error("No user found with email: {}", email);
                 status = NO_CONTENT;
             } else {
-                    log.debug("Get request successful.");
+                    log.info("Find request successful.");
                     status = OK;
             }
         }

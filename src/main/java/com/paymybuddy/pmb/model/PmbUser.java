@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -47,21 +48,22 @@ public class PmbUser {
     private boolean verified = false;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "RECIPIENT_ID")
+    @JoinColumn(name = "USER_ID")
     @Getter
     @Setter
     @ToString.Exclude
     private List<Recipient> recipients = new ArrayList<>();
 
+    @JsonIgnoreProperties("pmbUser")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "SPOT_ACCOUNT_ID")
+    @JoinColumn(name = "USER_ID")
     @Getter
     @Setter
     @ToString.Exclude
     private List<SpotAccount> spotAccounts = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "BANK_ACCOUNT_ID")
+    @JoinColumn(name = "USER_ID")
     @Getter
     @Setter
     @ToString.Exclude

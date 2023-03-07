@@ -39,14 +39,35 @@ public class SpotAccountService implements ISpotAccountService {
 
         if (pmbUser != null) {
 
-            spotAccount = new SpotAccount();
-            spotAccount.setPmbUser(pmbUser);
-            spotAccount.setCurrency(currency);
-            spotAccount.setCredit(0);
-            spotAccount = spotAccountRepository.save(spotAccount);
+            spotAccount = getByUserAndCurrency(pmbUser, currency);
+
+            if (spotAccount == null) {
+                spotAccount = new SpotAccount();
+                spotAccount.setPmbUser(pmbUser);
+
+                if ((!currency.equals("USD"))
+                        && (!currency.equals("GBP"))
+                        && (!currency.equals("CHF"))
+                        && (!currency.equals("AUD"))) {
+                    currency = "EUR";
+                }
+
+                spotAccount.setCurrency(currency);
+                spotAccount.setCredit(0);
+                spotAccount = spotAccountRepository.save(spotAccount);
+            } else {
+                log.debug("Spot account already exists.");
+            }
         }
         return spotAccount;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SpotAccount getByUserAndCurrency(PmbUser pmbUser, String currency) {
+        return spotAccountRepository.findByPmbUserAndCurrency(pmbUser, currency);
+    }
+
 
 /*    @Override
     @Transactional(readOnly = true)

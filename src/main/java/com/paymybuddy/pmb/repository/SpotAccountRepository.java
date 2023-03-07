@@ -10,7 +10,8 @@ import java.util.ArrayList;
 @Repository
 public interface SpotAccountRepository extends JpaRepository<SpotAccount, Integer> {
 
-    SpotAccount findByPmbUser(PmbUser pmbUser);
-
     ArrayList<SpotAccount> findAllByPmbUser(PmbUser pmbUser);
+
+    SpotAccount findByPmbUserAndCurrency(PmbUser pmbUser, String currency);
+
 }

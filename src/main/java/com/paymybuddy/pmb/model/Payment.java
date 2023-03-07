@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,12 @@ public class Payment {
     @Setter
     private int feePercent;
 
+    @Column(name = "CURRENCY")
+    @Getter
+    @Setter
+    private String currency;
+
+
     @Column(name = "DATE_TIME")
     @Getter
     @Setter
@@ -46,8 +53,9 @@ public class Payment {
     @Column(name = "PROCESSED")
     @Getter
     @Setter
-    private boolean processed;
+    private boolean processed = false;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "RECIPIENT_ID")
     @Getter

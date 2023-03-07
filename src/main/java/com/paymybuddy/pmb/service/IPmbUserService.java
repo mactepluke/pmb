@@ -1,12 +1,12 @@
 package com.paymybuddy.pmb.service;
 
 import com.paymybuddy.pmb.model.PmbUser;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface IPmbUserService {
-
+    @Transactional
     PmbUser create(String email, String password);
 
+    @Transactional
     PmbUser getUser(String email);
 }

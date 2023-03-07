@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,9 +15,9 @@ import java.util.List;
 public class Recipient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RECIPIENT_ID")
     @Getter
+    @Setter
     private Integer recipientId;
 
     @Column(name = "ENABLED")
@@ -25,12 +26,13 @@ public class Recipient {
     private boolean enabled = false;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "PAYMENT_ID")
+    @JoinColumn(name = "RECIPIENT_ID")
     @Getter
     @Setter
     @ToString.Exclude
     private List<Payment> payments = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_ID")
     @Getter

@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,13 +25,14 @@ public class BankAccount {
     @Column(name = "IBAN")
     @Getter
     @Setter
-    private float iban;
+    private String iban;
 
     @Column(name = "VERIFIED")
     @Getter
     @Setter
-    private float verified;
+    private boolean verified = false;
 
+    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "USER_ID")
     @Getter
