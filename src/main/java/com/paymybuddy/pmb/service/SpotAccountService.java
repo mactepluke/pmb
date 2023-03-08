@@ -3,6 +3,7 @@ package com.paymybuddy.pmb.service;
 import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.repository.SpotAccountRepository;
+import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,32 +33,36 @@ public class SpotAccountService implements ISpotAccountService {
 
     @Override
     @Transactional
-    public SpotAccount create(String email, String currency) {
+    public Wrap<SpotAccount, Boolean> create(String email, String currency) {
 
         SpotAccount spotAccount = null;
+        boolean created = false;
         PmbUser pmbUser = pmbUserService.getUser(email);
 
         if (pmbUser != null) {
-
             spotAccount = getByUserAndCurrency(pmbUser, currency);
 
             if (spotAccount == null) {
-                spotAccount = new SpotAccount();
-                spotAccount.setPmbUser(pmbUser);
-
-                if ((!currency.equals("USD"))
-                        && (!currency.equals("GBP"))
-                        && (!currency.equals("CHF"))
-                        && (!currency.equals("AUD"))) {
-                    currency = "EUR";
-                }
-
-                spotAccount.setCurrency(currency);
-                spotAccount.setCredit(0);
+                spotAccount = new SpotAccount(pmbUser, currency);
                 spotAccount = spotAccountRepository.save(spotAccount);
-            } else {
-                log.debug("Spot account already exists.");
+                created = true;
             }
+
+        } else {
+            log.error("Cannot find user with email: {}", email);
+        }
+        return new Wrap.Wrapper<SpotAccount, Boolean>().put(spotAccount).setTag(created).wrap();
+    }
+
+    @Override
+    @Transactional
+    public SpotAccount addIfNotExist(PmbUser pmbUser, String currency) {
+
+        SpotAccount spotAccount = getByUserAndCurrency(pmbUser, currency);
+
+        if (spotAccount == null) {
+            spotAccount = new SpotAccount(pmbUser, currency);
+            spotAccount = spotAccountRepository.save(spotAccount);
         }
         return spotAccount;
     }
@@ -68,10 +73,10 @@ public class SpotAccountService implements ISpotAccountService {
         return spotAccountRepository.findByPmbUserAndCurrency(pmbUser, currency);
     }
 
+    @Override
+    @Transactional
+    public SpotAccount update(SpotAccount spotAccount) {
+        return spotAccountRepository.save(spotAccount);
+    }
 
-/*    @Override
-    @Transactional(readOnly = true)
-    public SpotAccount getSpotAccount(PmbUser pmbUser) {
-        return spotAccountRepository.findByPmbUser(pmbUser);
-    }*/
 }

@@ -12,6 +12,22 @@ import lombok.ToString;
 @ToString
 public class SpotAccount {
 
+    protected SpotAccount() {
+    }
+    public SpotAccount(PmbUser pmbUser, String currency)    {
+        this.setPmbUser(pmbUser);
+
+        if ((!currency.equals("USD"))
+                && (!currency.equals("GBP"))
+                && (!currency.equals("CHF"))
+                && (!currency.equals("AUD"))) {
+            currency = "EUR";
+        }
+
+        this.setCurrency(currency);
+        this.setCredit(0);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SPOT_ACCOUNT_ID")
@@ -26,7 +42,7 @@ public class SpotAccount {
     @Column(name = "CREDIT")
     @Getter
     @Setter
-    private float credit;
+    private double credit;
 
     @JsonIgnoreProperties("spotAccounts")
     @ManyToOne(cascade = CascadeType.ALL)

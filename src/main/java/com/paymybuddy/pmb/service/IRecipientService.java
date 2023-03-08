@@ -18,5 +18,5 @@ public interface IRecipientService {
     Optional<Recipient> getById(int recipientId);
 
     @Transactional(readOnly = true)
-    boolean existsByUser(PmbUser pmbUser);
+    Recipient getByIdAndUser(Integer userId, PmbUser pmbUser);
 }

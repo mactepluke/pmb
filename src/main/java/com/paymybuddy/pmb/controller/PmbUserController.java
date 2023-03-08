@@ -63,7 +63,7 @@ public class PmbUserController {
         } else {
             email = email.toLowerCase();
 
-            log.info("Get request received with email: {}", email);
+            log.info("Login request received with email: {}", email);
 
             pmbUser = pmbUserService.getUser(email);
 
@@ -98,7 +98,7 @@ public class PmbUserController {
         } else {
             email = email.toLowerCase();
 
-            log.info("Get request received with email: {}", email);
+            log.info("Find request received with email: {}", email);
 
             pmbUser = pmbUserService.getUser(email);
 

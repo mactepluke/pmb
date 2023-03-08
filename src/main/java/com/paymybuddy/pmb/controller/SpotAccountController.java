@@ -2,6 +2,7 @@ package com.paymybuddy.pmb.controller;
 
 import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.ISpotAccountService;
+import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,14 +41,21 @@ public class SpotAccountController {
 
             log.info("Create request received with email: {}, currency: {}", email, currency);
 
-            spotAccount = spotAccountService.create(email, currency);
+            Wrap<SpotAccount, Boolean> response;
+            response = spotAccountService.create(email, currency);
+            spotAccount = response.unWrap();
 
             if (spotAccount == null) {
-                log.error("User does not exists with email: {}", email);
+                log.error("Cannot create spot account: user does not exist with email: {}", email);
                 status = NOT_ACCEPTABLE;
             } else {
-                log.info("Spot account created with id: {}", (spotAccount.getSpotAccountId() == null ? "<no_id>" : spotAccount.getSpotAccountId()));
-                status = CREATED;
+                if (response.getTag()) {
+                    log.info("Spot account created with id: {}.", (spotAccount.getSpotAccountId() == null ? "<no_id>" : spotAccount.getSpotAccountId()));
+                    status = CREATED;
+                } else {
+                    log.info("Spot account already exists with currency: {}.", currency);
+                    status = OK;
+                }
             }
         }
         return new ResponseEntity<>(spotAccount, status);
@@ -66,7 +74,7 @@ public class SpotAccountController {
         } else {
             email = email.toLowerCase();
 
-            log.info("Get request received with email: {}", email);
+            log.info("FindAll request received with email: {}", email);
 
             spotAccounts = spotAccountService.findAll(email);
 
@@ -74,7 +82,7 @@ public class SpotAccountController {
                 log.error("No spot accounts found with email: {}", email);
                 status = NO_CONTENT;
             } else {
-                log.info("Find All request successful.");
+                log.info("FindAll request successful.");
                 status = OK;
             }
         }

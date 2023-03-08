@@ -2,16 +2,20 @@ package com.paymybuddy.pmb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "PAYMENT")
 @ToString
+@Builder
+@AllArgsConstructor(access=AccessLevel.PROTECTED)
 public class Payment {
+
+    protected Payment()    {
+        // Empty public or protected constructor is required by Spring JPA to create the entity, and the default one does not exist anymore due to the use of Lombok's @Builder
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,17 +26,17 @@ public class Payment {
     @Column(name = "DESCRIPTION")
     @Getter
     @Setter
-    private String description;
+    private String description = "<no description>";
 
     @Column(name = "GROSS_AMOUNT")
     @Getter
     @Setter
-    private float grossAmount;
+    private double grossAmount;
 
     @Column(name = "NET_AMOUNT")
     @Getter
     @Setter
-    private float netAmount;
+    private double netAmount;
 
     @Column(name = "FEE_PERCENT")
     @Getter
@@ -43,7 +47,6 @@ public class Payment {
     @Getter
     @Setter
     private String currency;
-
 
     @Column(name = "DATE_TIME")
     @Getter

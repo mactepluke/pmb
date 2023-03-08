@@ -57,8 +57,8 @@ public class RecipientService implements IRecipientService {
 
     @Override
     @Transactional(readOnly = true)
-    public boolean existsByUser(PmbUser pmbUser) {
-        return recipientRepository.existsByPmbUser(pmbUser);
+    public Recipient getByIdAndUser(Integer userId, PmbUser pmbUser)    {
+        return recipientRepository.findByRecipientIdAndPmbUser(userId, pmbUser);
     }
 
 }

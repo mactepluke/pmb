@@ -14,5 +14,5 @@ public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
 
     ArrayList<Recipient> findAllByPmbUser(PmbUser pmbUser);
 
-    boolean existsByPmbUser(PmbUser pmbUser);
+    Recipient findByRecipientIdAndPmbUser(int id, PmbUser pmbUser);
 }

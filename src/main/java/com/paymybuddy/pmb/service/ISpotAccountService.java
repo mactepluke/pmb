@@ -2,6 +2,7 @@ package com.paymybuddy.pmb.service;
 
 import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.SpotAccount;
+import com.paymybuddy.pmb.utils.Wrap;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -11,8 +12,14 @@ public interface ISpotAccountService {
     ArrayList<SpotAccount> findAll(String email);
 
     @Transactional
-    SpotAccount create(String email, String currency);
+    Wrap<SpotAccount, Boolean> create(String email, String currency);
+
+    @Transactional
+    SpotAccount addIfNotExist(PmbUser pmbUser, String currency);
 
     @Transactional(readOnly = true)
     SpotAccount getByUserAndCurrency(PmbUser pmbUser, String currency);
+
+    @Transactional
+    SpotAccount update(SpotAccount spotAccount);
 }

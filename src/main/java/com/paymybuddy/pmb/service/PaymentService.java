@@ -5,17 +5,17 @@ import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.Recipient;
 import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.repository.PaymentRepository;
+import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static java.lang.Math.round;
 
 @Log4j2
 @Service
@@ -41,55 +41,51 @@ public class PaymentService implements IPaymentService {
 
     @Override
     @Transactional
-    public Payment create(String emitterEmail, String receiverEmail, String description, float netAmount, String currency) {
+    public Payment create(String emitterEmail, String receiverEmail, String description, double netAmount, String currency) {
 
         Payment payment = null;
 
         if (netAmount > 0) {
 
             PmbUser emitterUser = pmbUserService.getUser(emitterEmail);
-            PmbUser receiverUser = pmbUserService.getUser(receiverEmail);
+            PmbUser recipientUser = pmbUserService.getUser(receiverEmail);
+            Recipient recipient = null;
 
-            if ((emitterUser != null) && (receiverUser != null)) {
+            if (recipientUser != null) {
+                recipient = recipientService.getByIdAndUser(recipientUser.getUserId(), emitterUser);
+            }
 
-                Optional<Recipient> recipient = recipientService.getById(receiverUser.getUserId());
+            if ((emitterUser != null) && (recipientUser != null) && (recipient != null) && (recipient.isEnabled())) {
 
-                if (recipient.isPresent() && recipient.get().isEnabled()) {
+                SpotAccount emitterSpotAccount = spotAccountService.getByUserAndCurrency(emitterUser, currency);
 
-                    SpotAccount emitterSpotAccount = null;
+                double grossAmount = round(((netAmount + (netAmount * FEE_PERCENT / 100)) * 100) / 100);
 
-                    emitterSpotAccount = spotAccountService.getByUserAndCurrency(emitterUser, currency);
+                if ((emitterSpotAccount != null) && (emitterSpotAccount.getCredit() >= grossAmount)) {
 
-                    float grossAmount = netAmount + (netAmount * FEE_PERCENT / 100);
+                    SpotAccount receiverSpotAccount = spotAccountService.addIfNotExist(recipientUser, currency);
 
-                    if ((emitterSpotAccount != null) && (emitterSpotAccount.getCredit() >= grossAmount)) {
+                    AtomicBoolean processed = new AtomicBoolean(false);
+                    processed.set(processPayment(emitterSpotAccount, receiverSpotAccount, grossAmount, netAmount));
 
-                        SpotAccount receiverSpotAccount = spotAccountService.create(receiverEmail, currency);
+                    Payment.PaymentBuilder builder = Payment.builder();
+                    Wrap.Wrapper<Payment, Boolean> wrapper = new Wrap.Wrapper<>();
 
-                        if (receiverSpotAccount != null) {
+                    payment = builder
+                            .netAmount(netAmount)
+                            .grossAmount(grossAmount)
+                            .feePercent(FEE_PERCENT)
+                            .currency(currency)
+                            .dateTime(LocalDateTime.now())
+                            .description(description.substring(0, 49))
+                            .recipient(recipient)
+                            .processed(processed.get())
+                            .build();
 
-//TODO complete core algo here: change spot account credits accordingly
+                    payment = paymentRepository.save(payment);
 
-                            payment = new Payment();
-                            payment.setNetAmount(netAmount);
-                            payment.setGrossAmount(grossAmount);
-                            payment.setFeePercent(FEE_PERCENT);
-                            payment.setCurrency(currency);
-                            payment.setDateTime(LocalDateTime.now());
-                            payment.setDescription(description.substring(0, 49));
-                            payment.setRecipient(recipient.get());
-                            payment.setProcessed(true);
-
-                            payment = paymentRepository.save(payment);
-
-                        } else {
-                            log.error("Unable to create payment: cannot locate/create receiver account.");
-                        }
-                    } else {
-                        log.error("Unable to create payment: insufficient funds.");
-                    }
                 } else {
-                    log.error("Unable to create payment: cannot find receiver in user's recipients list.");
+                    log.error("Unable to create payment: insufficient funds.");
                 }
             } else {
                 log.error("Unable to create payment: cannot find one or both user(s).");
@@ -100,6 +96,15 @@ public class PaymentService implements IPaymentService {
         return payment;
     }
 
+    @Override
+    @Transactional
+    public boolean processPayment(SpotAccount emitterSpotAccount, SpotAccount receiverSpotAccount, double grossAmount, double netAmount) {
 
+        emitterSpotAccount.setCredit(emitterSpotAccount.getCredit() - grossAmount);
+        receiverSpotAccount.setCredit((receiverSpotAccount.getCredit() + netAmount));
+
+        return ((emitterSpotAccount == spotAccountService.update(emitterSpotAccount))
+                && (receiverSpotAccount == spotAccountService.update(receiverSpotAccount)));
+    }
 }
 
