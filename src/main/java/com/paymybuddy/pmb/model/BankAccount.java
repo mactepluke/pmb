@@ -11,6 +11,15 @@ import lombok.ToString;
 @ToString
 public class BankAccount {
 
+    protected BankAccount() {
+    }
+    public BankAccount(PmbUser pmbUser, String name, String iban)    {
+        this.setPmbUser(pmbUser);
+        this.setName(name);
+        this.setIban(iban);
+        this.setVerified(false);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BANK_ACCOUNT_ID")

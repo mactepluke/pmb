@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 public interface ISpotAccountService {
-    @Transactional
+    @Transactional(readOnly = true)
     ArrayList<SpotAccount> findAll(String email);
 
     @Transactional

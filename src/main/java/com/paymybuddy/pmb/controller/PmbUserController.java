@@ -8,13 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.paymybuddy.pmb.controller.ControllerConstants.*;
 import static org.springframework.http.HttpStatus.*;
 
 @Log4j2
 @RestController
 @RequestMapping("/pmbuser")
-public class PmbUserController {
+public class PmbUserController extends PmbController {
 
     private final IPmbUserService pmbUserService;
 
@@ -30,13 +29,9 @@ public class PmbUserController {
         HttpStatus status;
         PmbUser pmbUser = null;
 
-        if (email.isEmpty() || password.length() < 6 || password.length() > 20 || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error(INVALID_USER_CREDENTIALS);
-            status = BAD_REQUEST;
-        } else {
-            email = email.toLowerCase();
+        acknowledgeRequest("Create user", email);
 
-            log.info("Create request received with email: {}, password: {}", email, password.replaceAll(".", "*"));
+        if (emailIsValid(email) && passwordIsValid(password))  {
 
             pmbUser = pmbUserService.create(email, password);
 
@@ -47,6 +42,8 @@ public class PmbUserController {
                 log.info("User created with id: {}", (pmbUser.getUserId() == null ? "<no_id>" : pmbUser.getUserId()));
                 status = CREATED;
             }
+        } else {
+            status = BAD_REQUEST;
         }
         return new ResponseEntity<>(pmbUser, status);
     }
@@ -57,13 +54,9 @@ public class PmbUserController {
         HttpStatus status;
         PmbUser pmbUser = null;
 
-        if (email.isEmpty() || password.length() < 6 || password.length() > 20 || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error(INVALID_USER_CREDENTIALS);
-            status = BAD_REQUEST;
-        } else {
-            email = email.toLowerCase();
+        acknowledgeRequest("Login", email);
 
-            log.info("Login request received with email: {}", email);
+        if (emailIsValid(email) && passwordIsValid(password)) {
 
             pmbUser = pmbUserService.getUser(email);
 
@@ -80,6 +73,8 @@ public class PmbUserController {
                     pmbUser = null;
                 }
             }
+        } else {
+            status = BAD_REQUEST;
         }
 
         return new ResponseEntity<>(pmbUser, status);
@@ -92,13 +87,8 @@ public class PmbUserController {
         HttpStatus status;
         PmbUser pmbUser = null;
 
-        if (email.isEmpty() || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error(INVALID_EMAIL);
-            status = BAD_REQUEST;
-        } else {
-            email = email.toLowerCase();
-
-            log.info("Find request received with email: {}", email);
+        if (emailIsValid(email)) {
+            acknowledgeRequest("Find user", email);
 
             pmbUser = pmbUserService.getUser(email);
 
@@ -109,6 +99,8 @@ public class PmbUserController {
                     log.info("Find request successful.");
                     status = OK;
             }
+        } else {
+            status = BAD_REQUEST;
         }
 
         return new ResponseEntity<>(pmbUser, status);
@@ -121,29 +113,10 @@ public class PmbUserController {
         HttpStatus status;
         PmbUser pmbUser = null;
 
-        /*if (email.isEmpty() || password.length() < 6 || password.length() > 20 || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error("Invalid post request: email format must be correct and max 40 characters, and password must be between 6-20 characters.");
-            status = BAD_REQUEST;
-        } else {
-            email = email.toLowerCase();
-
-            log.info("Post request received with email:{}, password:{}", email, password.replaceAll(".", "*"));
-
-            pmbUser = pmbUserService.create(email, password);
-
-            if (pmbUser == null) {
-                log.error("User already exists with email:{}", email);
-                status = NOT_ACCEPTABLE;
-            } else {
-                log.info("User created with id: {}", (pmbUser.getUserId() == null ? "<no_id>" : pmbUser.getUserId()));
-                status = CREATED;
-            }
-        }*/
         status = OK;
         log.debug("Put request successful.");
 
         return new ResponseEntity<>(pmbUser, status);
     }
-
 
 }

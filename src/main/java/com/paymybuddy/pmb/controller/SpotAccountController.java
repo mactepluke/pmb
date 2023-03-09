@@ -12,17 +12,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 import static org.springframework.http.HttpStatus.*;
-import static com.paymybuddy.pmb.controller.ControllerConstants.*;
+
 
 @Log4j2
 @RestController
 @RequestMapping("/spotaccount")
-public class SpotAccountController {
+public class SpotAccountController extends PmbController {
 
     private final ISpotAccountService spotAccountService;
 
     @Autowired
     public SpotAccountController(ISpotAccountService spotAccountService) {
+        super();
         this.spotAccountService = spotAccountService;
     }
 
@@ -33,13 +34,10 @@ public class SpotAccountController {
         HttpStatus status;
         SpotAccount spotAccount = null;
 
-        if (email.isEmpty() || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error(INVALID_EMAIL);
-            status = BAD_REQUEST;
-        } else {
-            email = email.toLowerCase();
+        email = email.toLowerCase();
+        log.info("Create spot account request received with email: {}, currency: {}", email, currency);
 
-            log.info("Create request received with email: {}, currency: {}", email, currency);
+        if (emailIsValid(email)) {
 
             Wrap<SpotAccount, Boolean> response;
             response = spotAccountService.create(email, currency);
@@ -49,7 +47,7 @@ public class SpotAccountController {
                 log.error("Cannot create spot account: user does not exist with email: {}", email);
                 status = NOT_ACCEPTABLE;
             } else {
-                if (response.getTag()) {
+                if (Boolean.TRUE.equals(response.getTag())) {
                     log.info("Spot account created with id: {}.", (spotAccount.getSpotAccountId() == null ? "<no_id>" : spotAccount.getSpotAccountId()));
                     status = CREATED;
                 } else {
@@ -57,6 +55,8 @@ public class SpotAccountController {
                     status = OK;
                 }
             }
+        } else {
+            status = BAD_REQUEST;
         }
         return new ResponseEntity<>(spotAccount, status);
     }
@@ -68,23 +68,14 @@ public class SpotAccountController {
         HttpStatus status;
         ArrayList<SpotAccount> spotAccounts = null;
 
-        if (email.isEmpty() || email.length() > 40 || !email.matches(EMAIL_REGEX_PATTERN)) {
-            log.error(INVALID_EMAIL);
-            status = BAD_REQUEST;
-        } else {
-            email = email.toLowerCase();
+        acknowledgeRequest("Find all spot accounts", email);
 
-            log.info("FindAll request received with email: {}", email);
+        if (emailIsValid(email)) {
 
             spotAccounts = spotAccountService.findAll(email);
-
-            if (spotAccounts.isEmpty()) {
-                log.error("No spot accounts found with email: {}", email);
-                status = NO_CONTENT;
-            } else {
-                log.info("FindAll request successful.");
-                status = OK;
-            }
+            status = checkFindAllResult(spotAccounts.size());
+        } else {
+            status = BAD_REQUEST;
         }
 
         return new ResponseEntity<>(spotAccounts, status);

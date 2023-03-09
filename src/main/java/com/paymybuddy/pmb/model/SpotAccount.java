@@ -1,6 +1,5 @@
 package com.paymybuddy.pmb.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,7 +24,7 @@ public class SpotAccount {
         }
 
         this.setCurrency(currency);
-        this.setCredit(0);
+        this.setCredit(1000);
     }
 
     @Id

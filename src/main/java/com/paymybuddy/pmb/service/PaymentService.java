@@ -1,11 +1,7 @@
 package com.paymybuddy.pmb.service;
 
-import com.paymybuddy.pmb.model.Payment;
-import com.paymybuddy.pmb.model.PmbUser;
-import com.paymybuddy.pmb.model.Recipient;
-import com.paymybuddy.pmb.model.SpotAccount;
+import com.paymybuddy.pmb.model.*;
 import com.paymybuddy.pmb.repository.PaymentRepository;
-import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Math.round;
@@ -32,11 +29,26 @@ public class PaymentService implements IPaymentService {
     public PaymentService(PaymentRepository paymentRepository,
                           IPmbUserService pmbUserService,
                           IRecipientService recipientService,
-                          ISpotAccountService spotAccountService) {
+                          ISpotAccountService spotAccountService
+    ) {
         this.paymentRepository = paymentRepository;
         this.pmbUserService = pmbUserService;
         this.recipientService = recipientService;
         this.spotAccountService = spotAccountService;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ArrayList<Payment> findAll(String email) {
+
+        ArrayList<Recipient> recipients = recipientService.findAll(email);
+        ArrayList<Payment> payments = new ArrayList<>();
+
+        for(Recipient recipient: recipients)  {
+            payments.addAll(paymentRepository.findAllByRecipient(recipient));
+        }
+
+        return payments;
     }
 
     @Override
@@ -59,7 +71,7 @@ public class PaymentService implements IPaymentService {
 
                 SpotAccount emitterSpotAccount = spotAccountService.getByUserAndCurrency(emitterUser, currency);
 
-                double grossAmount = round(((netAmount + (netAmount * FEE_PERCENT / 100)) * 100) / 100);
+                double grossAmount = round((netAmount + (netAmount * FEE_PERCENT / 100.00)) * 100.00) / 100.00;
 
                 if ((emitterSpotAccount != null) && (emitterSpotAccount.getCredit() >= grossAmount)) {
 
@@ -69,7 +81,6 @@ public class PaymentService implements IPaymentService {
                     processed.set(processPayment(emitterSpotAccount, receiverSpotAccount, grossAmount, netAmount));
 
                     Payment.PaymentBuilder builder = Payment.builder();
-                    Wrap.Wrapper<Payment, Boolean> wrapper = new Wrap.Wrapper<>();
 
                     payment = builder
                             .netAmount(netAmount)
@@ -77,7 +88,7 @@ public class PaymentService implements IPaymentService {
                             .feePercent(FEE_PERCENT)
                             .currency(currency)
                             .dateTime(LocalDateTime.now())
-                            .description(description.substring(0, 49))
+                            .description(description)
                             .recipient(recipient)
                             .processed(processed.get())
                             .build();

@@ -14,6 +14,15 @@ import java.util.List;
 @ToString
 public class Recipient {
 
+    protected Recipient() {
+    }
+
+    public Recipient(PmbUser pmbUser, int recipientId) {
+        this.setPmbUser(pmbUser);
+        this.recipientId = recipientId;
+        this.enabled = true;
+    }
+
     @Id
     @Column(name = "RECIPIENT_ID")
     @Getter
@@ -23,7 +32,7 @@ public class Recipient {
     @Column(name = "ENABLED")
     @Getter
     @Setter
-    private boolean enabled = false;
+    private boolean enabled;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "RECIPIENT_ID")

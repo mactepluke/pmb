@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-
 @Log4j2
 @Service
 public class PmbUserService implements IPmbUserService {
@@ -42,12 +39,6 @@ public class PmbUserService implements IPmbUserService {
     @Transactional(readOnly = true)
     public PmbUser getUser(String email) {
         return pmbUserRepository.findByEmail(email);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<PmbUser> getById(int userId) {
-        return pmbUserRepository.findById(userId);
     }
 
 }

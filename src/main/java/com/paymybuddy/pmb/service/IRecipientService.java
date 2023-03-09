@@ -2,20 +2,21 @@ package com.paymybuddy.pmb.service;
 
 import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.Recipient;
+import com.paymybuddy.pmb.utils.Wrap;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 public interface IRecipientService {
+
+    @Transactional(readOnly = true)
+    ArrayList<Recipient> findAll(String email);
+
     @Transactional
-    Recipient create(String email, String recipientEmail);
+    Wrap<Recipient, String> create(String userEmail, String recipientEmail);
 
     @Transactional(readOnly = true)
-    ArrayList<Recipient> getRecipients(PmbUser pmbUser);
-
-    @Transactional(readOnly = true)
-    Optional<Recipient> getById(int recipientId);
+    Recipient getByUserAndRecipientId(PmbUser pmbUser, Integer userId);
 
     @Transactional(readOnly = true)
     Recipient getByIdAndUser(Integer userId, PmbUser pmbUser);
