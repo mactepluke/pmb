@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.controller;
 
+import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.Recipient;
 import com.paymybuddy.pmb.service.IRecipientService;
 import com.paymybuddy.pmb.utils.Wrap;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -68,20 +70,20 @@ public class RecipientController extends PmbController {
 
     //http://localhost:8080/recipient/findAll/<email>
     @GetMapping("/findAll/{email}")
-    public ResponseEntity<ArrayList<Recipient>> findAll(@PathVariable String email) {
+    public ResponseEntity<List<Recipient>> findAll(@PathVariable String email) {
 
         HttpStatus status;
-        ArrayList<Recipient> recipients = null;
+        List<Recipient> recipientUsers = null;
 
         acknowledgeRequest("Find all recipients", email);
 
         if (emailIsValid(email)) {
-            recipients = recipientService.findAll(email);
-            status = checkFindAllResult(recipients.size());
+            recipientUsers = recipientService.findAllEnabledAndExisting(email);
+            status = checkFindAllResult(recipientUsers.size());
         } else {
             status = BAD_REQUEST;
         }
-        return new ResponseEntity<>(recipients, status);
+        return new ResponseEntity<>(recipientUsers, status);
     }
 
 }

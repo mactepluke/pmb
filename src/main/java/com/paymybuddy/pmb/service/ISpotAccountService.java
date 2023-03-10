@@ -5,11 +5,11 @@ import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.utils.Wrap;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface ISpotAccountService {
     @Transactional(readOnly = true)
-    ArrayList<SpotAccount> findAll(String email);
+    List<SpotAccount> findAll(String email);
 
     @Transactional
     Wrap<SpotAccount, Boolean> create(String email, String currency);

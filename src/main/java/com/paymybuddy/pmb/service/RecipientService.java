@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -24,11 +26,24 @@ public class RecipientService implements IRecipientService {
         this.pmbUserService = pmbUserService;
     }
 
-    //TODO Must return a list of users, not recipients. Add code into the method.
     @Override
     @Transactional(readOnly = true)
-    public ArrayList<Recipient> findAll(String email) {
-        return recipientRepository.findAllByPmbUser(pmbUserService.getUser(email));
+    public List<Recipient> findAllEnabledAndExisting(String email) {
+
+        List<Recipient> recipients = recipientRepository.findAllByPmbUserAndEnabled(pmbUserService.getByEmail(email), true);
+        List<Recipient> existingRecipients = new ArrayList<>();
+
+        for(Recipient recipient: recipients)  {
+            if (pmbUserService.getById(recipient.getRecipientId()).isPresent()) {
+                existingRecipients.add(recipient);
+            }
+        }
+        return existingRecipients;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Recipient> findAllPastAndPresent(String email) {
+        return recipientRepository.findAllByPmbUser(pmbUserService.getByEmail(email));
     }
 
     @Override
@@ -37,16 +52,15 @@ public class RecipientService implements IRecipientService {
 
         Recipient recipient = null;
         String response = "NO";
-        PmbUser pmbUser = pmbUserService.getUser(userEmail);
-        PmbUser recipientUser = pmbUserService.getUser(recipientEmail);
+        PmbUser pmbUser = pmbUserService.getByEmail(userEmail);
+        PmbUser recipientUser = pmbUserService.getByEmail(recipientEmail);
 
         if ((pmbUser != null) && (recipientUser != null)) {
-            int recipientId = recipientUser.getUserId();
 
-            recipient = getByUserAndRecipientId(pmbUser, recipientId);
+            recipient = getByEmailAndUser(recipientEmail, pmbUser);
 
             if (recipient == null) {
-                recipient = new Recipient(pmbUser, recipientId);
+                recipient = new Recipient(pmbUser, recipientEmail);
                 recipient = recipientRepository.save(recipient);
                 response = "CREATED";
             } else if (!recipient.isEnabled()) {
@@ -62,14 +76,8 @@ public class RecipientService implements IRecipientService {
 
     @Override
     @Transactional(readOnly = true)
-    public Recipient getByUserAndRecipientId(PmbUser pmbUser, Integer userId) {
-        return recipientRepository.findByPmbUserAndRecipientId(pmbUser, userId);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Recipient getByIdAndUser(Integer userId, PmbUser pmbUser)    {
-        return recipientRepository.findByRecipientIdAndPmbUser(userId, pmbUser);
+    public Recipient getByEmailAndUser(String recipientEmail, PmbUser pmbUser)    {
+        return recipientRepository.findByRecipientEmailAndPmbUser(recipientEmail, pmbUser);
     }
 
 }

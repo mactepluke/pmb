@@ -3,12 +3,12 @@ import com.paymybuddy.pmb.model.Payment;
 import com.paymybuddy.pmb.model.SpotAccount;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IPaymentService {
 
     @Transactional(readOnly = true)
-    ArrayList<Payment> findAll(String email);
+    List<Payment> findAllEmitted(String email);
 
     @Transactional
     Payment create(String emitterEmail, String receiverEmail, String description, double netAmount, String currency);

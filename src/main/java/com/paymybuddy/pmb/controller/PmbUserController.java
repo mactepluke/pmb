@@ -58,7 +58,7 @@ public class PmbUserController extends PmbController {
 
         if (emailIsValid(email) && passwordIsValid(password)) {
 
-            pmbUser = pmbUserService.getUser(email);
+            pmbUser = pmbUserService.getByEmail(email);
 
             if (pmbUser == null) {
                 log.error("No user found with email: {}", email);
@@ -90,7 +90,7 @@ public class PmbUserController extends PmbController {
         if (emailIsValid(email)) {
             acknowledgeRequest("Find user", email);
 
-            pmbUser = pmbUserService.getUser(email);
+            pmbUser = pmbUserService.getByEmail(email);
 
             if (pmbUser == null) {
                 log.error("No user found with email: {}", email);

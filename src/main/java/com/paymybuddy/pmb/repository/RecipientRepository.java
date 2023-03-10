@@ -10,9 +10,9 @@ import java.util.ArrayList;
 @Repository
 public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
 
-    ArrayList<Recipient> findAllByPmbUser(PmbUser pmbUser);
+    ArrayList<Recipient> findAllByPmbUserAndEnabled(PmbUser user, boolean enabled);
 
-    Recipient findByRecipientIdAndPmbUser(int id, PmbUser pmbUser);
+    ArrayList<Recipient> findAllByPmbUser(PmbUser byEmail);
 
-    Recipient findByPmbUserAndRecipientId(PmbUser pmbUser, Integer userId);
+    Recipient findByRecipientEmailAndPmbUser(String recipientEmail, PmbUser pmbUser);
 }

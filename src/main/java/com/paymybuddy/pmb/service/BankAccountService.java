@@ -27,7 +27,7 @@ public class BankAccountService implements IBankAccountService {
     @Override
     @Transactional(readOnly = true)
     public ArrayList<BankAccount> findAll(String email) {
-        return bankAccountRepository.findAllByPmbUser(pmbUserService.getUser(email));
+        return bankAccountRepository.findAllByPmbUser(pmbUserService.getByEmail(email));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BankAccountService implements IBankAccountService {
 
         BankAccount bankAccount = null;
         boolean created = false;
-        PmbUser pmbUser = pmbUserService.getUser(email);
+        PmbUser pmbUser = pmbUserService.getByEmail(email);
 
         if (pmbUser != null) {
             bankAccount = getByUserAndIban(pmbUser, iban);

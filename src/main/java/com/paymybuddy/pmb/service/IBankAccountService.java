@@ -5,12 +5,12 @@ import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.utils.Wrap;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IBankAccountService {
 
     @Transactional(readOnly = true)
-    ArrayList<BankAccount> findAll(String email);
+    List<BankAccount> findAll(String email);
 
     @Transactional
     Wrap<BankAccount, Boolean> create(String email, String name, String iban);

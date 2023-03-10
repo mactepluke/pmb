@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Math.round;
@@ -36,20 +37,28 @@ public class PaymentService implements IPaymentService {
         this.recipientService = recipientService;
         this.spotAccountService = spotAccountService;
     }
-
+//TODO refactor this method
     @Override
     @Transactional(readOnly = true)
-    public ArrayList<Payment> findAll(String email) {
+    public ArrayList<Payment> findAllEmitted(String email) {
 
-        ArrayList<Recipient> recipients = recipientService.findAll(email);
+        List<Recipient> recipients = recipientService.findAllPastAndPresent(email);
         ArrayList<Payment> payments = new ArrayList<>();
 
         for(Recipient recipient: recipients)  {
             payments.addAll(paymentRepository.findAllByRecipient(recipient));
         }
-
         return payments;
     }
+
+    //TODO implement method findAllReceived
+/*
+    @Override
+    @Transactional(readOnly = true)
+    public ArrayList<Payment> findAllReceived(String email)  {
+        paymentRepository.findAllByRecipient(recipientService.);
+    }
+*/
 
     @Override
     @Transactional
@@ -59,12 +68,12 @@ public class PaymentService implements IPaymentService {
 
         if (netAmount > 0) {
 
-            PmbUser emitterUser = pmbUserService.getUser(emitterEmail);
-            PmbUser recipientUser = pmbUserService.getUser(receiverEmail);
+            PmbUser emitterUser = pmbUserService.getByEmail(emitterEmail);
+            PmbUser recipientUser = pmbUserService.getByEmail(receiverEmail);
             Recipient recipient = null;
 
             if (recipientUser != null) {
-                recipient = recipientService.getByIdAndUser(recipientUser.getUserId(), emitterUser);
+                recipient = recipientService.getByEmailAndUser(receiverEmail, emitterUser);
             }
 
             if ((emitterUser != null) && (recipientUser != null) && (recipient != null) && (recipient.isEnabled())) {

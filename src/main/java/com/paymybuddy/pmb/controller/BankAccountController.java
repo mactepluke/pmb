@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -63,10 +64,10 @@ public class BankAccountController extends PmbController {
 
     //http://localhost:8080/bankaccount/findAll/<email>
     @GetMapping("/findAll/{email}")
-    public ResponseEntity<ArrayList<BankAccount>> findAll(@PathVariable String email) {
+    public ResponseEntity<List<BankAccount>> findAll(@PathVariable String email) {
 
         HttpStatus status;
-        ArrayList<BankAccount> bankAccounts = null;
+        List<BankAccount> bankAccounts = null;
 
         acknowledgeRequest("Find all bank accounts", email);
 

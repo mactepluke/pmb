@@ -5,19 +5,18 @@ import com.paymybuddy.pmb.model.Recipient;
 import com.paymybuddy.pmb.utils.Wrap;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IRecipientService {
 
     @Transactional(readOnly = true)
-    ArrayList<Recipient> findAll(String email);
+    List<Recipient> findAllEnabledAndExisting(String email);
+    @Transactional(readOnly = true)
+    List<Recipient> findAllPastAndPresent(String email);
 
     @Transactional
     Wrap<Recipient, String> create(String userEmail, String recipientEmail);
 
     @Transactional(readOnly = true)
-    Recipient getByUserAndRecipientId(PmbUser pmbUser, Integer userId);
-
-    @Transactional(readOnly = true)
-    Recipient getByIdAndUser(Integer userId, PmbUser pmbUser);
+    Recipient getByEmailAndUser(String recipientEmail, PmbUser pmbUser);
 }

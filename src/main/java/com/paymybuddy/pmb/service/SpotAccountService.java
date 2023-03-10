@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -27,8 +28,8 @@ public class SpotAccountService implements ISpotAccountService {
 
     @Override
     @Transactional
-    public ArrayList<SpotAccount> findAll(String email) {
-        return spotAccountRepository.findAllByPmbUser(pmbUserService.getUser(email));
+    public List<SpotAccount> findAll(String email) {
+        return spotAccountRepository.findAllByPmbUser(pmbUserService.getByEmail(email));
     }
 
     @Override
@@ -37,7 +38,7 @@ public class SpotAccountService implements ISpotAccountService {
 
         SpotAccount spotAccount = null;
         boolean created = false;
-        PmbUser pmbUser = pmbUserService.getUser(email);
+        PmbUser pmbUser = pmbUserService.getByEmail(email);
 
         if (pmbUser != null) {
             spotAccount = getByUserAndCurrency(pmbUser, currency);

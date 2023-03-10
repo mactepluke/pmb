@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -63,10 +64,10 @@ public class SpotAccountController extends PmbController {
 
     //http://localhost:8080/spotaccount/findAll/<email>
     @GetMapping("/findAll/{email}")
-    public ResponseEntity<ArrayList<SpotAccount>> findAll(@PathVariable String email) {
+    public ResponseEntity<List<SpotAccount>> findAll(@PathVariable String email) {
 
         HttpStatus status;
-        ArrayList<SpotAccount> spotAccounts = null;
+        List<SpotAccount> spotAccounts = null;
 
         acknowledgeRequest("Find all spot accounts", email);
 

@@ -17,17 +17,23 @@ public class Recipient {
     protected Recipient() {
     }
 
-    public Recipient(PmbUser pmbUser, int recipientId) {
+    public Recipient(PmbUser pmbUser, String recipientEmail) {
         this.setPmbUser(pmbUser);
-        this.recipientId = recipientId;
+        this.recipientEmail = recipientEmail;
         this.enabled = true;
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RECIPIENT_ID")
     @Getter
     @Setter
     private Integer recipientId;
+
+    @Column(name = "RECIPIENT_EMAIL")
+    @Getter
+    @Setter
+    private String recipientEmail;
 
     @Column(name = "ENABLED")
     @Getter

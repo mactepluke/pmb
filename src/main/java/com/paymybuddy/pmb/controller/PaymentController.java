@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -69,16 +70,16 @@ public class PaymentController extends PmbController {
 
     //http://localhost:8080/payment/findAll/<email>
     @GetMapping("/findAll/{email}")
-    public ResponseEntity<ArrayList<Payment>> findAll(@PathVariable String email) {
+    public ResponseEntity<List<Payment>> findAll(@PathVariable String email) {
 
         HttpStatus status;
-        ArrayList<Payment> payments = null;
+        List<Payment> payments = null;
 
         acknowledgeRequest("Find all payments", email);
 
         if (emailIsValid(email)) {
 
-            payments = paymentService.findAll(email);
+            payments = paymentService.findAllEmitted(email);
             status = checkFindAllResult(payments.size());
         } else {
             status = BAD_REQUEST;
