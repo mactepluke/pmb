@@ -28,7 +28,7 @@ public class SpotAccountService implements ISpotAccountService {
 
     @Override
     @Transactional
-    public List<SpotAccount> findAll(String email) {
+    public List<SpotAccount> getAll(String email) {
         return spotAccountRepository.findAllByPmbUser(pmbUserService.getByEmail(email));
     }
 

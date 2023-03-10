@@ -10,13 +10,16 @@ import java.util.List;
 public interface IRecipientService {
 
     @Transactional(readOnly = true)
-    List<Recipient> findAllEnabledAndExisting(String email);
+    List<Recipient> getAllEnabledAndExisting(String email);
     @Transactional(readOnly = true)
-    List<Recipient> findAllPastAndPresent(String email);
+    List<Recipient> getAllPastAndPresent(String email);
 
     @Transactional
     Wrap<Recipient, String> create(String userEmail, String recipientEmail);
 
     @Transactional(readOnly = true)
     Recipient getByEmailAndUser(String recipientEmail, PmbUser pmbUser);
+
+    @Transactional(readOnly = true)
+    List<Recipient> getAllByEmail(String recipientEmail);
 }

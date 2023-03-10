@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Log4j2
 @Service
@@ -28,7 +27,7 @@ public class RecipientService implements IRecipientService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Recipient> findAllEnabledAndExisting(String email) {
+    public List<Recipient> getAllEnabledAndExisting(String email) {
 
         List<Recipient> recipients = recipientRepository.findAllByPmbUserAndEnabled(pmbUserService.getByEmail(email), true);
         List<Recipient> existingRecipients = new ArrayList<>();
@@ -42,7 +41,7 @@ public class RecipientService implements IRecipientService {
     }
 
     @Transactional(readOnly = true)
-    public List<Recipient> findAllPastAndPresent(String email) {
+    public List<Recipient> getAllPastAndPresent(String email) {
         return recipientRepository.findAllByPmbUser(pmbUserService.getByEmail(email));
     }
 
@@ -78,6 +77,12 @@ public class RecipientService implements IRecipientService {
     @Transactional(readOnly = true)
     public Recipient getByEmailAndUser(String recipientEmail, PmbUser pmbUser)    {
         return recipientRepository.findByRecipientEmailAndPmbUser(recipientEmail, pmbUser);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Recipient> getAllByEmail(String recipientEmail)    {
+        return recipientRepository.findByRecipientEmail(recipientEmail);
     }
 
 }

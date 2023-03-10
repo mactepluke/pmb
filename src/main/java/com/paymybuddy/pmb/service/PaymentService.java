@@ -37,13 +37,27 @@ public class PaymentService implements IPaymentService {
         this.recipientService = recipientService;
         this.spotAccountService = spotAccountService;
     }
-//TODO refactor this method
+
     @Override
     @Transactional(readOnly = true)
-    public ArrayList<Payment> findAllEmitted(String email) {
+    public List<Payment> getAllEmitted(String email) {
 
-        List<Recipient> recipients = recipientService.findAllPastAndPresent(email);
-        ArrayList<Payment> payments = new ArrayList<>();
+        return getAllToRecipients(recipientService.getAllPastAndPresent(email));
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Payment> getAllReceived(String email)  {
+
+        return getAllToRecipients(recipientService.getAllByEmail(email));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Payment>  getAllToRecipients(List<Recipient> recipients)    {
+
+        List<Payment> payments = new ArrayList<>();
 
         for(Recipient recipient: recipients)  {
             payments.addAll(paymentRepository.findAllByRecipient(recipient));
@@ -51,14 +65,6 @@ public class PaymentService implements IPaymentService {
         return payments;
     }
 
-    //TODO implement method findAllReceived
-/*
-    @Override
-    @Transactional(readOnly = true)
-    public ArrayList<Payment> findAllReceived(String email)  {
-        paymentRepository.findAllByRecipient(recipientService.);
-    }
-*/
 
     @Override
     @Transactional

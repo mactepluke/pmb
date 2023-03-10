@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -68,12 +67,13 @@ public class BankAccountController extends PmbController {
 
         HttpStatus status;
         List<BankAccount> bankAccounts = null;
+        String request = "Find all bank accounts";
 
-        acknowledgeRequest("Find all bank accounts", email);
+        acknowledgeRequest(request, email);
 
         if (emailIsValid(email)) {
-            bankAccounts = bankAccountService.findAll(email);
-            status = checkFindAllResult(bankAccounts.size());
+            bankAccounts = bankAccountService.getAll(email);
+            status = checkFindAllResult(request, bankAccounts.size());
         } else {
             status = BAD_REQUEST;
         }

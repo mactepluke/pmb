@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -68,13 +67,14 @@ public class SpotAccountController extends PmbController {
 
         HttpStatus status;
         List<SpotAccount> spotAccounts = null;
+        String request = "Find all spot accounts";
 
-        acknowledgeRequest("Find all spot accounts", email);
+        acknowledgeRequest(request, email);
 
         if (emailIsValid(email)) {
 
-            spotAccounts = spotAccountService.findAll(email);
-            status = checkFindAllResult(spotAccounts.size());
+            spotAccounts = spotAccountService.getAll(email);
+            status = checkFindAllResult(request, spotAccounts.size());
         } else {
             status = BAD_REQUEST;
         }

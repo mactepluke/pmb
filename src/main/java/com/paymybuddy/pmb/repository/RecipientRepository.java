@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
@@ -15,4 +16,6 @@ public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
     ArrayList<Recipient> findAllByPmbUser(PmbUser byEmail);
 
     Recipient findByRecipientEmailAndPmbUser(String recipientEmail, PmbUser pmbUser);
+
+    List<Recipient> findByRecipientEmail(String recipientEmail);
 }

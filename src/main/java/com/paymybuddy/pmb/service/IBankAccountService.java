@@ -10,7 +10,7 @@ import java.util.List;
 public interface IBankAccountService {
 
     @Transactional(readOnly = true)
-    List<BankAccount> findAll(String email);
+    List<BankAccount> getAll(String email);
 
     @Transactional
     Wrap<BankAccount, Boolean> create(String email, String name, String iban);

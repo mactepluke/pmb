@@ -47,13 +47,12 @@ public abstract class PmbController {
         }
     }
 
-
-    protected HttpStatus checkFindAllResult(int size) {
+    protected HttpStatus checkFindAllResult(String request, int size) {
         if (size == 0) {
-            log.info("No items found: list is empty.");
+            log.info("No items found for request {}: list is empty.", request);
             return NO_CONTENT;
         } else {
-            log.info("'Find all' request successful.");
+            log.info("{} request successful.", request);
             return OK;
         }
     }

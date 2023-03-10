@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ISpotAccountService {
     @Transactional(readOnly = true)
-    List<SpotAccount> findAll(String email);
+    List<SpotAccount> getAll(String email);
 
     @Transactional
     Wrap<SpotAccount, Boolean> create(String email, String currency);

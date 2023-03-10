@@ -26,7 +26,7 @@ public class BankAccountService implements IBankAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public ArrayList<BankAccount> findAll(String email) {
+    public ArrayList<BankAccount> getAll(String email) {
         return bankAccountRepository.findAllByPmbUser(pmbUserService.getByEmail(email));
     }
 

@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -74,13 +73,16 @@ public class PaymentController extends PmbController {
 
         HttpStatus status;
         List<Payment> payments = null;
+        String request = "Find all payments";
 
-        acknowledgeRequest("Find all payments", email);
+        acknowledgeRequest(request, email);
 
         if (emailIsValid(email)) {
 
-            payments = paymentService.findAllEmitted(email);
-            status = checkFindAllResult(payments.size());
+            payments = paymentService.getAllEmitted(email);
+            payments.addAll(paymentService.getAllReceived(email));
+
+            status = checkFindAllResult(request, payments.size());
         } else {
             status = BAD_REQUEST;
         }
