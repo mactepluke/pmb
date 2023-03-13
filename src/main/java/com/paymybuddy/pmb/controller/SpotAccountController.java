@@ -82,4 +82,16 @@ public class SpotAccountController extends PmbController {
         return new ResponseEntity<>(spotAccounts, status);
     }
 
+    //http://localhost:8080/spotaccount/delete/<currency>
+    @DeleteMapping("/delete/{currency}")
+    public ResponseEntity<List<SpotAccount>> delete(@PathVariable String currency) {
+
+        HttpStatus status = OK;
+        List<SpotAccount> spotAccounts = null;
+
+        log.debug("Spot account with currency {} deleted.", currency);
+
+        return new ResponseEntity<>(spotAccounts, status);
+    }
+
 }

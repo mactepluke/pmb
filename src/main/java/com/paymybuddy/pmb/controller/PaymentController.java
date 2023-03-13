@@ -1,7 +1,9 @@
 package com.paymybuddy.pmb.controller;
 
 import com.paymybuddy.pmb.model.Payment;
+import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.IPaymentService;
+import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,18 +29,19 @@ public class PaymentController extends PmbController {
     }
 
 
-    //http://localhost:8080/payment/create?user=<user>&buddy=<buddy>&description=<description>&net_amount=<net_amount>&currency=<currency>
+    //http://localhost:8080/payment/create?user=<user>&buddy=<buddy>
     @PostMapping("/create")
     public ResponseEntity<Payment> create(
             @RequestParam(name = "user") String emitterEmail,
             @RequestParam(name = "buddy") String receiverEmail,
-            @RequestParam String description,
-            @RequestParam(name = "net_amount") double netAmount,
-            @RequestParam String currency
+            @RequestBody Payment requestedPayment
     ) {
 
         HttpStatus status;
         Payment payment = null;
+        String description = requestedPayment.getDescription();
+        double netAmount = requestedPayment.getNetAmount();
+        String currency = requestedPayment.getCurrency();
 
         emitterEmail = emitterEmail.toLowerCase();
         receiverEmail = receiverEmail.toLowerCase();
@@ -46,11 +49,16 @@ public class PaymentController extends PmbController {
 
         if (emailIsValid(emitterEmail)) {
 
-            payment = paymentService.create(emitterEmail, receiverEmail, formatParam(description, PAYMENT_DESCRIPTION), netAmount, currency);
-
+            Wrap<Payment, Boolean> response;
+            response = paymentService.create(emitterEmail, receiverEmail, formatParam(description, PAYMENT_DESCRIPTION), netAmount, currency);
+            payment = response.unWrap();
 
             if (payment == null) {
-                log.error("Cannot create payment: try to change parameters.");
+                if (Boolean.TRUE.equals(response.getTag())) {
+                    log.error("Cannot create payment: insufficient funds.");
+                } else {
+                    log.error("Cannot create payment: cannot find one or both users.");
+                }
                 status = NOT_ACCEPTABLE;
             } else {
                 if (payment.isProcessed()) {

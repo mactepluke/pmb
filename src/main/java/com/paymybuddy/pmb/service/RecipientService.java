@@ -51,24 +51,30 @@ public class RecipientService implements IRecipientService {
 
         Recipient recipient = null;
         String response = "NO";
-        PmbUser pmbUser = pmbUserService.getByEmail(userEmail);
-        PmbUser recipientUser = pmbUserService.getByEmail(recipientEmail);
 
-        if ((pmbUser != null) && (recipientUser != null)) {
+        if (!userEmail.equals(recipientEmail)) {
 
-            recipient = getByEmailAndUser(recipientEmail, pmbUser);
+            PmbUser pmbUser = pmbUserService.getByEmail(userEmail);
+            PmbUser recipientUser = pmbUserService.getByEmail(recipientEmail);
 
-            if (recipient == null) {
-                recipient = new Recipient(pmbUser, recipientEmail);
-                recipient = recipientRepository.save(recipient);
-                response = "CREATED";
-            } else if (!recipient.isEnabled()) {
-                recipient.setEnabled(true);
-                response = "ENABLED";
+            if ((pmbUser != null) && (recipientUser != null)) {
+
+                recipient = getByEmailAndUser(recipientEmail, pmbUser);
+
+                if (recipient == null) {
+                    recipient = new Recipient(pmbUser, recipientEmail);
+                    recipient = recipientRepository.save(recipient);
+                    response = "CREATED";
+                } else if (!recipient.isEnabled()) {
+                    recipient.setEnabled(true);
+                    response = "ENABLED";
+                }
+
+            } else {
+                response = "NOTFOUND";
             }
-
         } else {
-            log.error("Cannot find user with email: {} or recipient with email: {}", userEmail, recipientEmail);
+            response = "SAME";
         }
         return new Wrap.Wrapper<Recipient, String>().put(recipient).setTag(response).wrap();
     }

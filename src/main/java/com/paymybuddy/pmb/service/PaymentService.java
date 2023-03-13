@@ -2,6 +2,7 @@ package com.paymybuddy.pmb.service;
 
 import com.paymybuddy.pmb.model.*;
 import com.paymybuddy.pmb.repository.PaymentRepository;
+import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,11 +69,12 @@ public class PaymentService implements IPaymentService {
 
     @Override
     @Transactional
-    public Payment create(String emitterEmail, String receiverEmail, String description, double netAmount, String currency) {
+    public Wrap<Payment, Boolean> create(String emitterEmail, String receiverEmail, String description, double netAmount, String currency) {
 
         Payment payment = null;
+        boolean usersFound = false;
 
-        if (netAmount > 0) {
+        if (netAmount > 0 && !emitterEmail.equals(receiverEmail)) {
 
             PmbUser emitterUser = pmbUserService.getByEmail(emitterEmail);
             PmbUser recipientUser = pmbUserService.getByEmail(receiverEmail);
@@ -84,8 +86,8 @@ public class PaymentService implements IPaymentService {
 
             if ((emitterUser != null) && (recipientUser != null) && (recipient != null) && (recipient.isEnabled())) {
 
+                usersFound = true;
                 SpotAccount emitterSpotAccount = spotAccountService.getByUserAndCurrency(emitterUser, currency);
-
                 double grossAmount = round((netAmount + (netAmount * FEE_PERCENT / 100.00)) * 100.00) / 100.00;
 
                 if ((emitterSpotAccount != null) && (emitterSpotAccount.getCredit() >= grossAmount)) {
@@ -110,16 +112,10 @@ public class PaymentService implements IPaymentService {
 
                     payment = paymentRepository.save(payment);
 
-                } else {
-                    log.error("Unable to create payment: insufficient funds.");
                 }
-            } else {
-                log.error("Unable to create payment: cannot find one or both user(s).");
             }
-        } else {
-            log.error("Unable to create payment: incorrect amount.");
         }
-        return payment;
+        return new Wrap.Wrapper<Payment, Boolean>().put(payment).setTag(usersFound).wrap();
     }
 
     @Override

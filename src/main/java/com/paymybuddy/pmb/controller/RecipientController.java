@@ -44,7 +44,11 @@ public class RecipientController extends PmbController {
             recipient = response.unWrap();
 
             if (recipient == null) {
-                log.error("Cannot create recipient: user does not exist with email: {}", userEmail);
+                if (response.getTag().equals("SAME"))   {
+                    log.error("Recipient and user emails must be different.");
+                } else {
+                    log.error("Cannot create recipient: cannot find user or recipient.");
+                }
                 status = NOT_ACCEPTABLE;
             } else {
                 if (response.getTag().equals("CREATED")) {

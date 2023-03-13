@@ -22,12 +22,14 @@ public class PmbUserController extends PmbController {
         this.pmbUserService = pmbUserService;
     }
 
-    //http://localhost:8080/pmbuser/create?email=<email>&password=<password>
+    //http://localhost:8080/pmbuser/create
     @PostMapping("/create")
-    public ResponseEntity<PmbUser> create(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<PmbUser> create(@RequestBody PmbUser requestedUser) {
 
         HttpStatus status;
         PmbUser pmbUser = null;
+        String email = requestedUser.getEmail();
+        String password = requestedUser.getPassword();
 
         acknowledgeRequest("Create user", email);
 
@@ -48,6 +50,7 @@ public class PmbUserController extends PmbController {
         return new ResponseEntity<>(pmbUser, status);
     }
 
+    //http://localhost:8080/pmbuser/login?email=<email>&password=<password>
     @GetMapping("/login")
     public ResponseEntity<PmbUser> login(@RequestParam String email, @RequestParam String password) {
 

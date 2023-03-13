@@ -8,6 +8,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -42,10 +43,25 @@ public class SecurityConfig {
     @Value("#{'${web.cors.allowed-headers}'.split(',')}")
     private List<String> allowedHeaders;
 
-
+/*    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf()
+                .disable()
+                .authorizeHttpRequests()
+                .shouldFilterAllDispatcherTypes(true)
+                .requestMatchers("/pmbuser/create","/pmbuser/login")
+                .permitAll()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        return http.build();
+    }*/
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http    // by default use a bean by the name of corsConfigurationSource
+        http
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(authz -> authz
                         .anyRequest()

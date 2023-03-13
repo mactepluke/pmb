@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -49,8 +48,6 @@ public class SpotAccountService implements ISpotAccountService {
                 created = true;
             }
 
-        } else {
-            log.error("Cannot find user with email: {}", email);
         }
         return new Wrap.Wrapper<SpotAccount, Boolean>().put(spotAccount).setTag(created).wrap();
     }
