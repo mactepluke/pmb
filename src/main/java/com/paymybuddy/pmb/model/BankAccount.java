@@ -42,7 +42,7 @@ public class BankAccount {
     private boolean verified = false;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Getter
     @Setter

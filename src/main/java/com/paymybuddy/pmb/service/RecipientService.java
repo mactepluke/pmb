@@ -91,4 +91,22 @@ public class RecipientService implements IRecipientService {
         return recipientRepository.findByRecipientEmail(recipientEmail);
     }
 
+    @Override
+    @Transactional
+    public Recipient delete(String userEmail, String recipientEmail) {
+        Recipient recipient = getByEmailAndUser(recipientEmail, pmbUserService.getByEmail(userEmail));
+
+        if (recipient != null) {
+            recipient.setEnabled(false);
+            recipient = update(recipient);
+        }
+        return recipient;
+    }
+
+    @Override
+    @Transactional
+    public Recipient update(Recipient recipient) {
+        return recipientRepository.save(recipient);
+    }
+
 }

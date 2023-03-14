@@ -1,6 +1,7 @@
 package com.paymybuddy.pmb.controller;
 
 import com.paymybuddy.pmb.model.BankAccount;
+import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.IBankAccountService;
 import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
@@ -34,6 +35,7 @@ public class BankAccountController extends PmbController {
 
         email = email.toLowerCase();
         name = formatParam(name, BANK_ACCOUNT_NAME);
+        iban = formatParam(iban, BANK_ACCOUNT_IBAN);
         log.info("Create bank account request received with email: {}, account name: {}, IBAN: {}", email, name, iban);
 
 
@@ -52,6 +54,7 @@ public class BankAccountController extends PmbController {
                     status = CREATED;
                 } else {
                     log.info("Bank account already exists with iban: {}.", iban);
+                    bankAccount = null;
                     status = OK;
                 }
             }
@@ -78,5 +81,28 @@ public class BankAccountController extends PmbController {
             status = BAD_REQUEST;
         }
         return new ResponseEntity<>(bankAccounts, status);
+    }
+
+    //http://localhost:8080/bankaccount/delete?email=<email>&iban=<iban>
+    @DeleteMapping("/delete")
+    public ResponseEntity<BankAccount> delete(@RequestParam String email, @RequestParam String iban) {
+
+        HttpStatus status;
+        BankAccount bankAccount = null;
+        String request = "Delete bank account";
+
+        acknowledgeRequest(request, email);
+
+        bankAccount = bankAccountService.delete(email, iban);
+
+        if (bankAccount != null) {
+            log.debug("Bank account with currency {} deleted.", iban);
+            status = OK;
+        } else {
+            log.debug("Cannot delete bank account: resource does not exist.");
+            status = NO_CONTENT;
+        }
+
+        return new ResponseEntity<>(bankAccount, status);
     }
 }

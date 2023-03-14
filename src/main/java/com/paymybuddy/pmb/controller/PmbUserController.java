@@ -39,7 +39,7 @@ public class PmbUserController extends PmbController {
 
             if (pmbUser == null) {
                 log.error("User already exists with email: {}", email);
-                status = NOT_ACCEPTABLE;
+                status = OK;
             } else {
                 log.info("User created with id: {}", (pmbUser.getUserId() == null ? "<no_id>" : pmbUser.getUserId()));
                 status = CREATED;

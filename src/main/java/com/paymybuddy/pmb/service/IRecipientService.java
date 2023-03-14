@@ -22,4 +22,10 @@ public interface IRecipientService {
 
     @Transactional(readOnly = true)
     List<Recipient> getAllByEmail(String recipientEmail);
+
+    @Transactional
+    Recipient delete(String userEmail, String recipientEmail);
+
+    @Transactional
+    Recipient update(Recipient recipient);
 }

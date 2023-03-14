@@ -1,6 +1,7 @@
 package com.paymybuddy.pmb.controller;
 
 import com.paymybuddy.pmb.model.Recipient;
+import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.IRecipientService;
 import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
@@ -49,7 +50,7 @@ public class RecipientController extends PmbController {
                 } else {
                     log.error("Cannot create recipient: cannot find user or recipient.");
                 }
-                status = NOT_ACCEPTABLE;
+                status = NO_CONTENT;
             } else {
                 if (response.getTag().equals("CREATED")) {
                     log.info("Recipient created with id: {}.", (recipient.getRecipientId() == null ? "<no_id>" : recipient.getRecipientId()));
@@ -87,6 +88,29 @@ public class RecipientController extends PmbController {
             status = BAD_REQUEST;
         }
         return new ResponseEntity<>(recipientUsers, status);
+    }
+
+    //http://localhost:8080/recipient/delete?email=<email>&recipient=<recipient>
+    @DeleteMapping("/delete")
+    public ResponseEntity<Recipient> delete(@RequestParam String email, @RequestParam(name = "recipient") String recipientEmail) {
+
+        HttpStatus status;
+        Recipient recipient = null;
+        String request = "Delete recipient";
+
+        acknowledgeRequest(request, recipientEmail);
+
+        recipient = recipientService.delete(email, recipientEmail);
+
+        if (recipient != null) {
+            log.debug("Recipient with email {} deleted (i.e disabled).", recipientEmail);
+            status = OK;
+        } else {
+            log.debug("Cannot delete recipient: resource does not exist.");
+            status = NO_CONTENT;
+        }
+
+        return new ResponseEntity<>(recipient, status);
     }
 
 }

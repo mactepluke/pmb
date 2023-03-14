@@ -59,7 +59,7 @@ public class Payment {
     private boolean processed = false;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RECIPIENT_ID")
     @Getter
     @Setter

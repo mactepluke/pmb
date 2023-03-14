@@ -48,7 +48,7 @@ public class Recipient {
     private List<Payment> payments = new ArrayList<>();
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Getter
     @Setter

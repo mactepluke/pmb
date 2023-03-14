@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/logs/app.log
+/logs/app_20230310.log.zip

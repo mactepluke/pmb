@@ -39,24 +39,38 @@ public class BankAccountService implements IBankAccountService {
         PmbUser pmbUser = pmbUserService.getByEmail(email);
 
         if (pmbUser != null) {
-            bankAccount = getByUserAndIban(pmbUser, iban);
+            bankAccount = getByIban(iban);
 
             if (bankAccount == null) {
                 bankAccount = new BankAccount(pmbUser, name, iban);
                 bankAccount = bankAccountRepository.save(bankAccount);
                 created = true;
             }
-
-        } else {
-            log.error("Cannot find user with email: {}", email);
         }
         return new Wrap.Wrapper<BankAccount, Boolean>().put(bankAccount).setTag(created).wrap();
     }
 
     @Override
     @Transactional(readOnly = true)
+    public BankAccount getByIban(String iban) {
+        return bankAccountRepository.findByIban(iban);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public BankAccount getByUserAndIban(PmbUser pmbUser, String iban) {
         return bankAccountRepository.findByPmbUserAndIban(pmbUser, iban);
+    }
+
+    @Transactional
+    @Override
+    public BankAccount delete(String email, String iban) {
+        BankAccount bankAccount = getByUserAndIban(pmbUserService.getByEmail(email), iban);
+
+        if (bankAccount != null) {
+            bankAccountRepository.delete(bankAccount);
+        }
+        return bankAccount;
     }
 
 }

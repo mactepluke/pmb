@@ -13,4 +13,6 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Intege
     ArrayList<BankAccount> findAllByPmbUser(PmbUser pmbUser);
 
     BankAccount findByPmbUserAndIban(PmbUser pmbUser, String iban);
+
+    BankAccount findByIban(String iban);
 }

@@ -21,5 +21,8 @@ public interface ISpotAccountService {
     SpotAccount getByUserAndCurrency(PmbUser pmbUser, String currency);
 
     @Transactional
+    SpotAccount delete(String email, String currency);
+
+    @Transactional
     SpotAccount update(SpotAccount spotAccount);
 }

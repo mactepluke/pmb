@@ -47,7 +47,6 @@ public class SpotAccountService implements ISpotAccountService {
                 spotAccount = spotAccountRepository.save(spotAccount);
                 created = true;
             }
-
         }
         return new Wrap.Wrapper<SpotAccount, Boolean>().put(spotAccount).setTag(created).wrap();
     }
@@ -69,6 +68,17 @@ public class SpotAccountService implements ISpotAccountService {
     @Transactional(readOnly = true)
     public SpotAccount getByUserAndCurrency(PmbUser pmbUser, String currency) {
         return spotAccountRepository.findByPmbUserAndCurrency(pmbUser, currency);
+    }
+
+    @Override
+    @Transactional
+    public SpotAccount delete(String email, String currency) {
+        SpotAccount spotAccount = getByUserAndCurrency(pmbUserService.getByEmail(email), currency);
+
+        if (spotAccount != null) {
+            spotAccountRepository.delete(spotAccount);
+        }
+        return spotAccount;
     }
 
     @Override

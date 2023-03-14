@@ -45,13 +45,14 @@ public class SpotAccountController extends PmbController {
 
             if (spotAccount == null) {
                 log.error("Cannot create spot account: user does not exist with email: {}", email);
-                status = NOT_ACCEPTABLE;
+                status = NO_CONTENT;
             } else {
                 if (Boolean.TRUE.equals(response.getTag())) {
                     log.info("Spot account created with id: {}.", (spotAccount.getSpotAccountId() == null ? "<no_id>" : spotAccount.getSpotAccountId()));
                     status = CREATED;
                 } else {
                     log.info("Spot account already exists with currency: {}.", currency);
+                    spotAccount = null;
                     status = OK;
                 }
             }
@@ -82,16 +83,27 @@ public class SpotAccountController extends PmbController {
         return new ResponseEntity<>(spotAccounts, status);
     }
 
-    //http://localhost:8080/spotaccount/delete/<currency>
-    @DeleteMapping("/delete/{currency}")
-    public ResponseEntity<List<SpotAccount>> delete(@PathVariable String currency) {
+    //http://localhost:8080/spotaccount/delete?email=<email>&currency=<currency>
+    @DeleteMapping("/delete")
+    public ResponseEntity<SpotAccount> delete(@RequestParam String email, @RequestParam String currency) {
 
-        HttpStatus status = OK;
-        List<SpotAccount> spotAccounts = null;
+        HttpStatus status;
+        SpotAccount spotAccount = null;
+        String request = "Delete spot account";
 
-        log.debug("Spot account with currency {} deleted.", currency);
+        acknowledgeRequest(request, email);
 
-        return new ResponseEntity<>(spotAccounts, status);
+        spotAccount = spotAccountService.delete(email, currency);
+
+        if (spotAccount != null) {
+            log.debug("Spot account with currency {} deleted.", currency);
+            status = OK;
+        } else {
+            log.debug("Cannot delete spot account: resource does not exist.");
+            status = NO_CONTENT;
+        }
+
+        return new ResponseEntity<>(spotAccount, status);
     }
 
 }

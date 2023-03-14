@@ -24,7 +24,7 @@ public class SpotAccount {
         }
 
         this.setCurrency(currency);
-        this.setCredit(1000);
+        this.setCredit(0);
     }
 
     @Id
@@ -44,7 +44,7 @@ public class SpotAccount {
     private double credit;
 
     @JsonIgnoreProperties("spotAccounts")
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Getter
     @Setter

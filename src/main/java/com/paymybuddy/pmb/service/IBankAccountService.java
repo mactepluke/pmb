@@ -16,5 +16,11 @@ public interface IBankAccountService {
     Wrap<BankAccount, Boolean> create(String email, String name, String iban);
 
     @Transactional(readOnly = true)
+    BankAccount getByIban(String iban);
+
+    @Transactional(readOnly = true)
     BankAccount getByUserAndIban(PmbUser pmbUser, String iban);
+
+    @Transactional
+    BankAccount delete(String email, String iban);
 }
