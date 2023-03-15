@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.controller;
 
+import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.Recipient;
 import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.IRecipientService;
@@ -73,10 +74,10 @@ public class RecipientController extends PmbController {
 
     //http://localhost:8080/recipient/findAll/<email>
     @GetMapping("/findAll/{email}")
-    public ResponseEntity<List<Recipient>> findAll(@PathVariable String email) {
+    public ResponseEntity<List<PmbUser>> findAll(@PathVariable String email) {
 
         HttpStatus status;
-        List<Recipient> recipientUsers = null;
+        List<PmbUser> recipientUsers = null;
         String request = "Find all recipients";
 
         acknowledgeRequest(request, email);
@@ -95,7 +96,7 @@ public class RecipientController extends PmbController {
     public ResponseEntity<Recipient> delete(@RequestParam String email, @RequestParam(name = "recipient") String recipientEmail) {
 
         HttpStatus status;
-        Recipient recipient = null;
+        Recipient recipient;
         String request = "Delete recipient";
 
         acknowledgeRequest(request, recipientEmail);

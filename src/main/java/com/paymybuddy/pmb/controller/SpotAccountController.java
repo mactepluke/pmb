@@ -88,7 +88,7 @@ public class SpotAccountController extends PmbController {
     public ResponseEntity<SpotAccount> delete(@RequestParam String email, @RequestParam String currency) {
 
         HttpStatus status;
-        SpotAccount spotAccount = null;
+        SpotAccount spotAccount;
         String request = "Delete spot account";
 
         acknowledgeRequest(request, email);

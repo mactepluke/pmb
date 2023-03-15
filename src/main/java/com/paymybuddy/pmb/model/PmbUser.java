@@ -14,7 +14,7 @@ import java.util.List;
 @ToString
 public class PmbUser {
 
-    private static final String DEFAULT_VALUE = "unknown";
+    private static final String DEFAULT_VALUE = "(unknown)";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

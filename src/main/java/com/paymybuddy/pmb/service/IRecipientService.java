@@ -10,7 +10,7 @@ import java.util.List;
 public interface IRecipientService {
 
     @Transactional(readOnly = true)
-    List<Recipient> getAllEnabledAndExisting(String email);
+    List<PmbUser> getAllEnabledAndExisting(String email);
     @Transactional(readOnly = true)
     List<Recipient> getAllPastAndPresent(String email);
 

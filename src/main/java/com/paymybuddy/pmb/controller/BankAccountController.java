@@ -88,7 +88,7 @@ public class BankAccountController extends PmbController {
     public ResponseEntity<BankAccount> delete(@RequestParam String email, @RequestParam String iban) {
 
         HttpStatus status;
-        BankAccount bankAccount = null;
+        BankAccount bankAccount;
         String request = "Delete bank account";
 
         acknowledgeRequest(request, email);
