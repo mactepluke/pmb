@@ -46,6 +46,7 @@ public class BankAccount {
     @JoinColumn(name = "USER_ID")
     @Getter
     @Setter
+    @ToString.Exclude
     private PmbUser pmbUser;
 
 }

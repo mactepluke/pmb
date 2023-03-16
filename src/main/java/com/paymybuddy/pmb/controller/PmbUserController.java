@@ -105,14 +105,14 @@ public class PmbUserController extends PmbController {
         } else {
             status = BAD_REQUEST;
         }
-
         return new ResponseEntity<>(pmbUser, status);
     }
 
+    //TODO implement this method
     //http://localhost:8080/pmbuser/update?email=<email>&item=<item>
     @PutMapping("/update")
-    public ResponseEntity<PmbUser> update(@RequestParam String email, @RequestParam String item) {
-//TODO écrire un premier paramètre de type enum pour le type de paramètre à updater ?
+    public ResponseEntity<PmbUser> update(@RequestParam String email, @RequestBody PmbUser editedUser) {
+
         HttpStatus status;
         PmbUser pmbUser = null;
 

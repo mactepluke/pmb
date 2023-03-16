@@ -73,13 +73,11 @@ public class SpotAccountController extends PmbController {
         acknowledgeRequest(request, email);
 
         if (emailIsValid(email)) {
-
             spotAccounts = spotAccountService.getAll(email);
             status = checkFindAllResult(request, spotAccounts.size());
         } else {
             status = BAD_REQUEST;
         }
-
         return new ResponseEntity<>(spotAccounts, status);
     }
 

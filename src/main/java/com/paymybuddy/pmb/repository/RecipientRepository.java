@@ -15,7 +15,7 @@ public interface RecipientRepository extends JpaRepository<Recipient, Integer> {
 
     ArrayList<Recipient> findAllByPmbUser(PmbUser byEmail);
 
-    Recipient findByRecipientEmailAndPmbUser(String recipientEmail, PmbUser pmbUser);
+    Recipient findByPmbUserAndRecipientPmbUser(PmbUser pmbUser, PmbUser recipientUser);
 
-    List<Recipient> findByRecipientEmail(String recipientEmail);
+    List<Recipient> findAllByRecipientPmbUser(PmbUser byEmail);
 }

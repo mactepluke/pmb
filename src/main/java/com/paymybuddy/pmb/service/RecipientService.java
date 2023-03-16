@@ -34,18 +34,21 @@ public class RecipientService implements IRecipientService {
         List<PmbUser> existingRecipients = new ArrayList<>();
 
         for(Recipient recipient: recipients)  {
-            PmbUser recipientUser = pmbUserService.getByEmail(recipient.getRecipientEmail());
-
-            if ((recipientUser != null) && (email != recipient.getRecipientEmail()))  {
-                existingRecipients.add(recipientUser);
-            }
+            Optional<PmbUser> recipientUser = pmbUserService.getById(recipient.getRecipientPmbUser().getUserId());
+            recipientUser.ifPresent(existingRecipients::add);
         }
         return existingRecipients;
     }
 
+    @Override
     @Transactional(readOnly = true)
-    public List<Recipient> getAllPastAndPresent(String email) {
-        return recipientRepository.findAllByPmbUser(pmbUserService.getByEmail(email));
+    public List<Recipient> getAllByRecipientUser(PmbUser recipientPmbUser)    {
+        return recipientRepository.findAllByRecipientPmbUser(recipientPmbUser);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Recipient> getAllByUser(PmbUser pmbUser) {
+        return recipientRepository.findAllByPmbUser(pmbUser);
     }
 
     @Override
@@ -62,10 +65,10 @@ public class RecipientService implements IRecipientService {
 
             if ((pmbUser != null) && (recipientUser != null)) {
 
-                recipient = getByEmailAndUser(recipientEmail, pmbUser);
+                recipient = getByUsers(pmbUser, recipientUser);
 
                 if (recipient == null) {
-                    recipient = new Recipient(pmbUser, recipientEmail);
+                    recipient = new Recipient(pmbUser, recipientUser);
                     recipient = recipientRepository.save(recipient);
                     response = "CREATED";
                 } else if (!recipient.isEnabled()) {
@@ -84,20 +87,14 @@ public class RecipientService implements IRecipientService {
 
     @Override
     @Transactional(readOnly = true)
-    public Recipient getByEmailAndUser(String recipientEmail, PmbUser pmbUser)    {
-        return recipientRepository.findByRecipientEmailAndPmbUser(recipientEmail, pmbUser);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<Recipient> getAllByEmail(String recipientEmail)    {
-        return recipientRepository.findByRecipientEmail(recipientEmail);
+    public Recipient getByUsers(PmbUser pmbUser, PmbUser recipientUser) {
+        return recipientRepository.findByPmbUserAndRecipientPmbUser(pmbUser, recipientUser);
     }
 
     @Override
     @Transactional
     public Recipient delete(String userEmail, String recipientEmail) {
-        Recipient recipient = getByEmailAndUser(recipientEmail, pmbUserService.getByEmail(userEmail));
+        Recipient recipient = getByUsers(pmbUserService.getByEmail(userEmail), pmbUserService.getByEmail(recipientEmail));
 
         if (recipient != null) {
             recipient.setEnabled(false);

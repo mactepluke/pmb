@@ -12,16 +12,16 @@ public interface IRecipientService {
     @Transactional(readOnly = true)
     List<PmbUser> getAllEnabledAndExisting(String email);
     @Transactional(readOnly = true)
-    List<Recipient> getAllPastAndPresent(String email);
+    List<Recipient> getAllByUser(PmbUser pmbUser);
 
     @Transactional
     Wrap<Recipient, String> create(String userEmail, String recipientEmail);
 
     @Transactional(readOnly = true)
-    Recipient getByEmailAndUser(String recipientEmail, PmbUser pmbUser);
+    Recipient getByUsers(PmbUser pmbUser, PmbUser recipientUser);
 
     @Transactional(readOnly = true)
-    List<Recipient> getAllByEmail(String recipientEmail);
+    List<Recipient> getAllByRecipientUser(PmbUser recipientPmbUser);
 
     @Transactional
     Recipient delete(String userEmail, String recipientEmail);

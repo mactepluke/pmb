@@ -43,7 +43,7 @@ public class PaymentService implements IPaymentService {
     @Transactional(readOnly = true)
     public List<Payment> getAllEmitted(String email) {
 
-        return getAllToRecipients(recipientService.getAllPastAndPresent(email));
+        return getAllToRecipients(recipientService.getAllByUser(pmbUserService.getByEmail(email)));
 
     }
 
@@ -51,12 +51,12 @@ public class PaymentService implements IPaymentService {
     @Transactional(readOnly = true)
     public List<Payment> getAllReceived(String email)  {
 
-        return getAllToRecipients(recipientService.getAllByEmail(email));
+        return getAllToRecipients(recipientService.getAllByRecipientUser(pmbUserService.getByEmail(email)));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Payment>  getAllToRecipients(List<Recipient> recipients)    {
+    public List<Payment> getAllToRecipients(List<Recipient> recipients)    {
 
         List<Payment> payments = new ArrayList<>();
 
@@ -81,7 +81,7 @@ public class PaymentService implements IPaymentService {
             Recipient recipient = null;
 
             if (recipientUser != null) {
-                recipient = recipientService.getByEmailAndUser(receiverEmail, emitterUser);
+                recipient = recipientService.getByUsers(emitterUser, recipientUser);
             }
 
             if ((emitterUser != null) && (recipientUser != null) && (recipient != null) && (recipient.isEnabled())) {

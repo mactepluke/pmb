@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "USER")
 @ToString
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PmbUser {
 
     private static final String DEFAULT_VALUE = "(unknown)";
@@ -47,6 +49,7 @@ public class PmbUser {
     @Setter
     private boolean verified = false;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Getter
@@ -54,7 +57,7 @@ public class PmbUser {
     @ToString.Exclude
     private List<Recipient> recipients = new ArrayList<>();
 
-    @JsonIgnoreProperties("pmbUser")
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Getter
@@ -62,6 +65,7 @@ public class PmbUser {
     @ToString.Exclude
     private List<SpotAccount> spotAccounts = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Getter

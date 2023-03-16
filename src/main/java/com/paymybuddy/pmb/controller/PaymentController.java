@@ -29,11 +29,11 @@ public class PaymentController extends PmbController {
     }
 
 
-    //http://localhost:8080/payment/create?user=<user>&buddy=<buddy>
+    //http://localhost:8080/payment/create?user=<user>&recipient=<recipient>
     @PostMapping("/create")
     public ResponseEntity<Payment> create(
             @RequestParam(name = "user") String emitterEmail,
-            @RequestParam(name = "buddy") String receiverEmail,
+            @RequestParam(name = "recipient") String receiverEmail,
             @RequestBody Payment requestedPayment
     ) {
 

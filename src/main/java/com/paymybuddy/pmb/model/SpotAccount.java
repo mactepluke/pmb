@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class SpotAccount {
         }
 
         this.setCurrency(currency);
-        this.setCredit(0);
+        this.setCredit(500);
     }
 
     @Id
@@ -43,7 +44,7 @@ public class SpotAccount {
     @Setter
     private double credit;
 
-    @JsonIgnoreProperties("spotAccounts")
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     @Getter
