@@ -108,17 +108,23 @@ public class PmbUserController extends PmbController {
         return new ResponseEntity<>(pmbUser, status);
     }
 
-    //TODO implement this method
-    //http://localhost:8080/pmbuser/update?email=<email>&item=<item>
+    //http://localhost:8080/pmbuser/update?email=<email>
     @PutMapping("/update")
     public ResponseEntity<PmbUser> update(@RequestParam String email, @RequestBody PmbUser editedUser) {
 
         HttpStatus status;
-        PmbUser pmbUser = null;
+        PmbUser pmbUser;
+        acknowledgeRequest("Update user", email);
 
-        status = OK;
-        log.debug("Put request successful.");
+        pmbUser = pmbUserService.update(email, editedUser);
 
+        if (pmbUser != null) {
+            status = OK;
+            log.debug("Update request successful.");
+        } else {
+            status = INTERNAL_SERVER_ERROR;
+            log.debug("Couldn't update user.");
+        }
         return new ResponseEntity<>(pmbUser, status);
     }
 

@@ -38,6 +38,22 @@ public class PmbUserService implements IPmbUserService {
     }
 
     @Override
+    @Transactional
+    public PmbUser update(String email, PmbUser newUser) {
+
+        PmbUser pmbUser = getByEmail(email);
+
+        if (pmbUser != null)    {
+            pmbUser.setEmail(newUser.getEmail());
+            pmbUser.setPassword(newUser.getPassword());
+            pmbUser.setFirstName(newUser.getFirstName());
+            pmbUser.setLastName(newUser.getLastName());
+            pmbUser = pmbUserRepository.save(pmbUser);
+        }
+        return pmbUser;
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public PmbUser getByEmail(String email) {
         return pmbUserRepository.findByEmail(email);

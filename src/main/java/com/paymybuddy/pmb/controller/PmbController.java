@@ -10,7 +10,7 @@ import static org.springframework.http.HttpStatus.OK;
 public abstract class PmbController {
 
     protected static final byte USER_NAME = 20;
-    protected static final byte BANK_ACCOUNT_NAME = 10;
+    protected static final byte BANK_ACCOUNT_NAME = 20;
     protected static final byte BANK_ACCOUNT_IBAN = 34;
     protected static final byte PAYMENT_DESCRIPTION = 50;
 
@@ -40,7 +40,7 @@ public abstract class PmbController {
 
     protected boolean ibanIsValid(String iban) {
 
-        if (!iban.isEmpty() && iban.length() <= 34 && iban.length() >= 30) {
+        if (iban.length() <= 34 && iban.length() >= 30) {
             return true;
         } else {
             log.error("Invalid IBAN format: must be correct and between 30-34 characters.");

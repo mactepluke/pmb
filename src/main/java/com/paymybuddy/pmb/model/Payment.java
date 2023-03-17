@@ -71,4 +71,9 @@ public class Payment {
     @Getter
     @Setter
     private String recipientEmail;
+
+    @Transient
+    @Getter
+    @Setter
+    private String emitterEmail;
 }

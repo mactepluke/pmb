@@ -9,6 +9,9 @@ public interface IPmbUserService {
     @Transactional
     PmbUser create(String email, String password);
 
+    @Transactional
+    PmbUser update(String email, PmbUser newUser);
+
     @Transactional(readOnly = true)
     PmbUser getByEmail(String email);
 

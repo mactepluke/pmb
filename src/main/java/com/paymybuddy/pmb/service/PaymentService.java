@@ -50,6 +50,7 @@ public class PaymentService implements IPaymentService {
 
         for (Payment payment : payments)    {
             payment.setRecipientEmail(payment.getRecipient().getRecipientPmbUser().getEmail());
+            payment.setEmitterEmail(payment.getRecipient().getPmbUser().getEmail());
         }
         return payments;
     }
