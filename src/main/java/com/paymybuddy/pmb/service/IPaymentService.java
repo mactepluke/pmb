@@ -23,4 +23,7 @@ public interface IPaymentService {
 
     @Transactional
     boolean processPayment(SpotAccount emitterSpotAccount, SpotAccount receiverSpotAccount, double grossAmount, double netAmount);
+
+    @Transactional(readOnly = true)
+    List<Payment> getAllTransfers(String email);
 }

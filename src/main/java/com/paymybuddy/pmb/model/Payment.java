@@ -26,7 +26,8 @@ public class Payment {
     @Column(name = "DESCRIPTION")
     @Getter
     @Setter
-    private String description = "<no description>";
+    @Builder.Default
+    private String description = "-";
 
     @Column(name = "GROSS_AMOUNT")
     @Getter
@@ -56,13 +57,18 @@ public class Payment {
     @Column(name = "PROCESSED")
     @Getter
     @Setter
+    @Builder.Default
     private boolean processed = false;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "RECIPIENT_ID")
     @Getter
     @Setter
     private Recipient recipient;
 
+    @Transient
+    @Getter
+    @Setter
+    private String recipientEmail;
 }

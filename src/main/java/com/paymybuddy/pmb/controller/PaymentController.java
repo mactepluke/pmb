@@ -86,15 +86,11 @@ public class PaymentController extends PmbController {
         acknowledgeRequest(request, email);
 
         if (emailIsValid(email)) {
-
-            payments = paymentService.getAllEmitted(email);
-            payments.addAll(paymentService.getAllReceived(email));
-
+            payments = paymentService.getAllTransfers(email);
             status = checkFindAllResult(request, payments.size());
         } else {
             status = BAD_REQUEST;
         }
-
         return new ResponseEntity<>(payments, status);
     }
 }

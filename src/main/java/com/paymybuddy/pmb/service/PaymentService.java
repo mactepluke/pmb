@@ -41,8 +41,22 @@ public class PaymentService implements IPaymentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Payment> getAllEmitted(String email) {
+    public List<Payment> getAllTransfers(String email) {
 
+        List <Payment> payments;
+
+        payments = getAllEmitted(email);
+        payments.addAll(getAllReceived(email));
+
+        for (Payment payment : payments)    {
+            payment.setRecipientEmail(payment.getRecipient().getRecipientPmbUser().getEmail());
+        }
+        return payments;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Payment> getAllEmitted(String email) {
         return getAllToRecipients(recipientService.getAllByUser(pmbUserService.getByEmail(email)));
 
     }
@@ -50,7 +64,6 @@ public class PaymentService implements IPaymentService {
     @Override
     @Transactional(readOnly = true)
     public List<Payment> getAllReceived(String email)  {
-
         return getAllToRecipients(recipientService.getAllByRecipientUser(pmbUserService.getByEmail(email)));
     }
 
@@ -128,5 +141,7 @@ public class PaymentService implements IPaymentService {
         return ((emitterSpotAccount == spotAccountService.update(emitterSpotAccount))
                 && (receiverSpotAccount == spotAccountService.update(receiverSpotAccount)));
     }
+
+
 }
 
