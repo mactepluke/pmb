@@ -2,8 +2,10 @@ package com.paymybuddy.pmb.controller;
 
 import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.service.IPmbUserService;
+import com.paymybuddy.pmb.service.ISpotAccountService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +15,16 @@ import static org.springframework.http.HttpStatus.*;
 @Log4j2
 @RestController
 @RequestMapping("/pmbuser")
+@Scope("request")
 public class PmbUserController extends PmbController {
 
     private final IPmbUserService pmbUserService;
+    private final ISpotAccountService spotAccountService;
 
     @Autowired
-    public PmbUserController(IPmbUserService pmbUserService) {
+    public PmbUserController(IPmbUserService pmbUserService, ISpotAccountService spotAccountService) {
         this.pmbUserService = pmbUserService;
+        this.spotAccountService = spotAccountService;
     }
 
     //http://localhost:8080/pmbuser/create
@@ -33,7 +38,7 @@ public class PmbUserController extends PmbController {
 
         acknowledgeRequest("Create user", email);
 
-        if (emailIsValid(email) && passwordIsValid(password))  {
+        if (emailIsValid(email) && passwordIsValid(password)) {
 
             pmbUser = pmbUserService.create(email, password);
 
@@ -43,6 +48,10 @@ public class PmbUserController extends PmbController {
             } else {
                 log.info("User created with id: {}", (pmbUser.getUserId() == null ? "<no_id>" : pmbUser.getUserId()));
                 status = CREATED;
+
+                if (Boolean.FALSE.equals(spotAccountService.create(email, "DEFAULT").getTag())) {
+                    log.error("Could not create default spot account for user of email: {}", email);
+                }
             }
         } else {
             status = BAD_REQUEST;
@@ -99,8 +108,8 @@ public class PmbUserController extends PmbController {
                 log.error("No user found with email: {}", email);
                 status = NO_CONTENT;
             } else {
-                    log.info("Find request successful.");
-                    status = OK;
+                log.info("Find request successful.");
+                status = OK;
             }
         } else {
             status = BAD_REQUEST;

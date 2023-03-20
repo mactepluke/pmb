@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -82,7 +83,7 @@ public class PaymentService implements IPaymentService {
 
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Wrap<Payment, Boolean> create(String emitterEmail, String receiverEmail, String description, double netAmount, String currency) {
 
         Payment payment = null;
@@ -133,7 +134,7 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean processPayment(SpotAccount emitterSpotAccount, SpotAccount receiverSpotAccount, double grossAmount, double netAmount) {
 
         emitterSpotAccount.setCredit(emitterSpotAccount.getCredit() - grossAmount);

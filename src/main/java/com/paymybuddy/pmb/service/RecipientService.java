@@ -7,6 +7,7 @@ import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ public class RecipientService implements IRecipientService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Wrap<Recipient, String> create(String userEmail, String recipientEmail) {
 
         Recipient recipient = null;
@@ -92,7 +93,7 @@ public class RecipientService implements IRecipientService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Recipient delete(String userEmail, String recipientEmail) {
         Recipient recipient = getByUsers(pmbUserService.getByEmail(userEmail), pmbUserService.getByEmail(recipientEmail));
 
@@ -104,7 +105,7 @@ public class RecipientService implements IRecipientService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Recipient update(Recipient recipient) {
         return recipientRepository.save(recipient);
     }

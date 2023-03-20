@@ -5,6 +5,7 @@ import com.paymybuddy.pmb.repository.PmbUserRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class PmbUserService implements IPmbUserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public PmbUser create(String email, String password) {
 
         PmbUser pmbUser = getByEmail(email);
@@ -38,7 +39,7 @@ public class PmbUserService implements IPmbUserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public PmbUser update(String email, PmbUser newUser) {
 
         PmbUser pmbUser = getByEmail(email);

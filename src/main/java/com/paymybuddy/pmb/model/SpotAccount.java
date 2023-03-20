@@ -1,7 +1,6 @@
 package com.paymybuddy.pmb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,7 @@ public class SpotAccount {
         }
 
         this.setCurrency(currency);
-        this.setCredit(500);
+        this.setCredit(0);
     }
 
     @Id
@@ -49,5 +48,6 @@ public class SpotAccount {
     @JoinColumn(name = "USER_ID")
     @Getter
     @Setter
+    @ToString.Exclude
     private PmbUser pmbUser;
 }

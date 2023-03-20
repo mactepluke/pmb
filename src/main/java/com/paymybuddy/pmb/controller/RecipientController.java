@@ -2,11 +2,11 @@ package com.paymybuddy.pmb.controller;
 
 import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.Recipient;
-import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.IRecipientService;
 import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +19,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @Log4j2
 @RestController
 @RequestMapping("/recipient")
+@Scope("request")
 public class RecipientController extends PmbController {
 
 

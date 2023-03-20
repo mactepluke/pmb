@@ -7,6 +7,7 @@ import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class SpotAccountService implements ISpotAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Wrap<SpotAccount, Boolean> create(String email, String currency) {
 
         SpotAccount spotAccount = null;
@@ -44,7 +45,9 @@ public class SpotAccountService implements ISpotAccountService {
 
             if (spotAccount == null) {
                 spotAccount = new SpotAccount(pmbUser, currency);
+
                 spotAccount = spotAccountRepository.save(spotAccount);
+
                 created = true;
             }
         }
@@ -71,7 +74,7 @@ public class SpotAccountService implements ISpotAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public SpotAccount delete(String email, String currency) {
         SpotAccount spotAccount = getByUserAndCurrency(pmbUserService.getByEmail(email), currency);
 
@@ -82,7 +85,7 @@ public class SpotAccountService implements ISpotAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public SpotAccount update(SpotAccount spotAccount) {
         return spotAccountRepository.save(spotAccount);
     }

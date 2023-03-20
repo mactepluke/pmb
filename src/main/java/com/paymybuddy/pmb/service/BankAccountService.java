@@ -7,6 +7,7 @@ import com.paymybuddy.pmb.utils.Wrap;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class BankAccountService implements IBankAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Wrap<BankAccount, Boolean> create(String email, String name, String iban) {
 
         BankAccount bankAccount = null;
@@ -62,8 +63,8 @@ public class BankAccountService implements IBankAccountService {
         return bankAccountRepository.findByPmbUserAndIban(pmbUser, iban);
     }
 
-    @Transactional
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public BankAccount delete(String email, String iban) {
         BankAccount bankAccount = getByUserAndIban(pmbUserService.getByEmail(email), iban);
 
