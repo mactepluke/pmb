@@ -66,7 +66,8 @@ public class BankAccountService implements IBankAccountService {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public BankAccount delete(String email, String iban) {
-        BankAccount bankAccount = getByUserAndIban(pmbUserService.getByEmail(email), iban);
+        PmbUser user = pmbUserService.getByEmail(email);
+        BankAccount bankAccount = getByUserAndIban(user, iban);
 
         if (bankAccount != null) {
             bankAccountRepository.delete(bankAccount);

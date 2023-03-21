@@ -78,8 +78,8 @@ public class SpotAccountService implements ISpotAccountService {
     public SpotAccount delete(String email, String currency) {
         SpotAccount spotAccount = getByUserAndCurrency(pmbUserService.getByEmail(email), currency);
 
-        if (spotAccount != null) {
-            spotAccountRepository.delete(spotAccount);
+        if ((spotAccount != null) && spotAccount.getCredit() == 0) {
+                spotAccountRepository.delete(spotAccount);
         }
         return spotAccount;
     }

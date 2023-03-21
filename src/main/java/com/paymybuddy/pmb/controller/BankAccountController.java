@@ -72,6 +72,7 @@ public class BankAccountController extends PmbController {
         HttpStatus status;
         List<BankAccount> bankAccounts = null;
         String request = "Find all bank accounts";
+        email = email.toLowerCase();
 
         acknowledgeRequest(request, email);
 
@@ -92,12 +93,15 @@ public class BankAccountController extends PmbController {
         BankAccount bankAccount;
         String request = "Delete bank account";
 
+
+        email = email.toLowerCase();
+        iban = formatParam(iban, BANK_ACCOUNT_IBAN);
         acknowledgeRequest(request, email);
 
         bankAccount = bankAccountService.delete(email, iban);
 
         if (bankAccount != null) {
-            log.debug("Bank account with currency {} deleted.", iban);
+            log.debug("Bank account with IBAN {} deleted.", iban);
             status = OK;
         } else {
             log.debug("Cannot delete bank account: resource does not exist.");

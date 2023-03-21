@@ -39,6 +39,8 @@ public class RecipientController extends PmbController {
         Recipient recipient = null;
 
         acknowledgeRequest("Create recipient", recipientEmail);
+        userEmail = userEmail.toLowerCase();
+        recipientEmail = recipientEmail.toLowerCase();
 
         if (emailIsValid(userEmail))  {
 
@@ -81,6 +83,7 @@ public class RecipientController extends PmbController {
         List<PmbUser> recipientUsers = null;
         String request = "Find all recipients";
 
+        email = email.toLowerCase();
         acknowledgeRequest(request, email);
 
         if (emailIsValid(email)) {
@@ -99,6 +102,9 @@ public class RecipientController extends PmbController {
         HttpStatus status;
         Recipient recipient;
         String request = "Delete recipient";
+
+        email = email.toLowerCase();
+        recipientEmail = recipientEmail.toLowerCase();
 
         acknowledgeRequest(request, recipientEmail);
 

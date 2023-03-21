@@ -1,5 +1,6 @@
 package com.paymybuddy.pmb.controller;
 
+import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.ISpotAccountService;
 import com.paymybuddy.pmb.utils.Wrap;
@@ -72,6 +73,7 @@ public class SpotAccountController extends PmbController {
         List<SpotAccount> spotAccounts = null;
         String request = "Find all spot accounts";
 
+        email = email.toLowerCase();
         acknowledgeRequest(request, email);
 
         if (emailIsValid(email)) {
@@ -91,6 +93,7 @@ public class SpotAccountController extends PmbController {
         SpotAccount spotAccount;
         String request = "Delete spot account";
 
+        email = email.toLowerCase();
         acknowledgeRequest(request, email);
 
         spotAccount = spotAccountService.delete(email, currency);
@@ -99,11 +102,38 @@ public class SpotAccountController extends PmbController {
             log.debug("Spot account with currency {} deleted.", currency);
             status = OK;
         } else {
-            log.debug("Cannot delete spot account: resource does not exist.");
-            status = NO_CONTENT;
+            log.debug("Cannot delete spot account: resource does not exist or spot account is not empty.");
+            status = METHOD_NOT_ALLOWED;
         }
 
         return new ResponseEntity<>(spotAccount, status);
     }
+
+    //TODO Implement credit request
+    //http://localhost:8080/spotaccount/credit?email=<email>&iban=<iban>&amount=<amount>
+    @PutMapping("/credit")
+    public ResponseEntity<SpotAccount> credit(@RequestParam String email,
+                                          @RequestParam String iban,
+                                          @RequestParam double amount,
+                                          @RequestBody SpotAccount spotAccount) {
+
+        HttpStatus status = OK;
+
+        return new ResponseEntity<>(spotAccount, status);
+    }
+
+    //TODO Implement withdraw request
+    //http://localhost:8080/spotaccount/withdraw?email=<email>&iban=<iban>&amount=<amount>
+    @PutMapping("/withdraw")
+    public ResponseEntity<SpotAccount> withdraw(@RequestParam String email,
+                                              @RequestParam String iban,
+                                              @RequestParam double amount,
+                                              @RequestBody SpotAccount spotAccount) {
+
+        HttpStatus status = OK;
+
+        return new ResponseEntity<>(spotAccount, status);
+    }
+
 
 }

@@ -33,8 +33,10 @@ public class PmbUserController extends PmbController {
 
         HttpStatus status;
         PmbUser pmbUser = null;
-        String email = requestedUser.getEmail();
+        String email = requestedUser.getEmail().toLowerCase();
         String password = requestedUser.getPassword();
+        requestedUser.setFirstName(formatParam(requestedUser.getFirstName(), USER_NAME));
+        requestedUser.setLastName(formatParam(requestedUser.getLastName(), USER_NAME));
 
         acknowledgeRequest("Create user", email);
 
@@ -66,6 +68,7 @@ public class PmbUserController extends PmbController {
         HttpStatus status;
         PmbUser pmbUser = null;
 
+        email = email.toLowerCase();
         acknowledgeRequest("Login", email);
 
         if (emailIsValid(email) && passwordIsValid(password)) {
@@ -98,6 +101,7 @@ public class PmbUserController extends PmbController {
 
         HttpStatus status;
         PmbUser pmbUser = null;
+        email = email.toLowerCase();
 
         if (emailIsValid(email)) {
             acknowledgeRequest("Find user", email);
@@ -122,18 +126,29 @@ public class PmbUserController extends PmbController {
     public ResponseEntity<PmbUser> update(@RequestParam String email, @RequestBody PmbUser editedUser) {
 
         HttpStatus status;
-        PmbUser pmbUser;
+        PmbUser pmbUser = null;
+        email = email.toLowerCase();
+
         acknowledgeRequest("Update user", email);
 
-        pmbUser = pmbUserService.update(email, editedUser);
+        if (emailIsValid(email) && passwordIsValid(editedUser.getPassword())) {
 
-        if (pmbUser != null) {
-            status = OK;
-            log.debug("Update request successful.");
-        } else {
-            status = INTERNAL_SERVER_ERROR;
-            log.debug("Couldn't update user.");
+            editedUser.setFirstName(formatParam(editedUser.getFirstName(), USER_NAME));
+            editedUser.setLastName(formatParam(editedUser.getLastName(), USER_NAME));
+
+            pmbUser = pmbUserService.update(email, editedUser);
+
+            if (pmbUser != null) {
+                status = OK;
+                log.debug("Update request successful.");
+            } else {
+                status = INTERNAL_SERVER_ERROR;
+                log.debug("Couldn't update user.");
+            }
         }
+        else    {
+            status = BAD_REQUEST;
+            }
         return new ResponseEntity<>(pmbUser, status);
     }
 
