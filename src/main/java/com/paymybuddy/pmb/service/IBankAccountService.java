@@ -24,4 +24,7 @@ public interface IBankAccountService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     BankAccount delete(String email, String iban);
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    boolean requestSwiftTransfer(String transaction, String iban, String currency, double amount);
 }

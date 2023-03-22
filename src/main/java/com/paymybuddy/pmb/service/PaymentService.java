@@ -44,12 +44,12 @@ public class PaymentService implements IPaymentService {
     @Transactional(readOnly = true)
     public List<Payment> getAllTransfers(String email) {
 
-        List <Payment> payments;
+        List<Payment> payments;
 
         payments = getAllEmitted(email);
         payments.addAll(getAllReceived(email));
 
-        for (Payment payment : payments)    {
+        for (Payment payment : payments) {
             payment.setRecipientEmail(payment.getRecipient().getRecipientPmbUser().getEmail());
             payment.setEmitterEmail(payment.getRecipient().getPmbUser().getEmail());
         }
@@ -65,17 +65,17 @@ public class PaymentService implements IPaymentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Payment> getAllReceived(String email)  {
+    public List<Payment> getAllReceived(String email) {
         return getAllToRecipients(recipientService.getAllByRecipientUser(pmbUserService.getByEmail(email)));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Payment> getAllToRecipients(List<Recipient> recipients)    {
+    public List<Payment> getAllToRecipients(List<Recipient> recipients) {
 
         List<Payment> payments = new ArrayList<>();
 
-        for(Recipient recipient: recipients)  {
+        for (Recipient recipient : recipients) {
             payments.addAll(paymentRepository.findAllByRecipient(recipient));
         }
         return payments;
@@ -105,7 +105,12 @@ public class PaymentService implements IPaymentService {
                 SpotAccount emitterSpotAccount = spotAccountService.getByUserAndCurrency(emitterUser, currency);
                 double grossAmount = round((netAmount + (netAmount * FEE_PERCENT / 100.00)) * 100.00) / 100.00;
 
-                if ((emitterSpotAccount != null) && (emitterSpotAccount.getCredit() >= grossAmount)) {
+                if (emitterSpotAccount != null) {
+
+                    if (emitterSpotAccount.getCredit() < grossAmount) {
+                        grossAmount = emitterSpotAccount.getCredit();
+                        netAmount = round((grossAmount - (grossAmount * FEE_PERCENT / 100.00)) * 100.00) / 100.00;
+                    }
 
                     SpotAccount receiverSpotAccount = spotAccountService.addIfNotExist(recipientUser, currency);
 

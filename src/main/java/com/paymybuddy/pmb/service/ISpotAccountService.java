@@ -26,4 +26,10 @@ public interface ISpotAccountService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     SpotAccount update(SpotAccount spotAccount);
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    SpotAccount credit(String email, String iban, String currency, double amount);
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    SpotAccount withdraw(String email, String iban, String currency, double amount);
 }

@@ -16,7 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PmbUser {
 
-    private static final String DEFAULT_VALUE = "(unknown)";
+    private static final String DEFAULT_VALUE = "";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

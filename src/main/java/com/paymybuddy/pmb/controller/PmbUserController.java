@@ -140,10 +140,10 @@ public class PmbUserController extends PmbController {
 
             if (pmbUser != null) {
                 status = OK;
-                log.debug("Update request successful.");
+                log.info("Update request successful.");
             } else {
                 status = INTERNAL_SERVER_ERROR;
-                log.debug("Couldn't update user.");
+                log.error("Couldn't update user.");
             }
         }
         else    {

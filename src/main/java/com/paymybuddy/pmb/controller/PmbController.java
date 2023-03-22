@@ -65,7 +65,7 @@ public abstract class PmbController {
 
     protected String formatParam(String string, int maxLength) {
 
-        if (string == null || string.isEmpty()) {
+        if (string == null || string.isEmpty() || string.equals("null") || string.equals("undefined")) {
             string = "-";
         }
 

@@ -1,6 +1,5 @@
 package com.paymybuddy.pmb.controller;
 
-import com.paymybuddy.pmb.model.PmbUser;
 import com.paymybuddy.pmb.model.SpotAccount;
 import com.paymybuddy.pmb.service.ISpotAccountService;
 import com.paymybuddy.pmb.utils.Wrap;
@@ -96,44 +95,87 @@ public class SpotAccountController extends PmbController {
         email = email.toLowerCase();
         acknowledgeRequest(request, email);
 
-        spotAccount = spotAccountService.delete(email, currency);
+        if (emailIsValid(email)) {
+            spotAccount = spotAccountService.delete(email, currency);
 
-        if (spotAccount != null) {
-            log.debug("Spot account with currency {} deleted.", currency);
-            status = OK;
+            if (spotAccount != null) {
+                log.info("Spot account with currency {} deleted.", currency);
+                status = OK;
+            } else {
+                log.error("Cannot delete spot account: resource does not exist or spot account is not empty.");
+                status = METHOD_NOT_ALLOWED;
+            }
+
         } else {
-            log.debug("Cannot delete spot account: resource does not exist or spot account is not empty.");
-            status = METHOD_NOT_ALLOWED;
+            log.error("Invalid parameters.");
+            status = BAD_REQUEST;
+            spotAccount = null;
         }
 
         return new ResponseEntity<>(spotAccount, status);
     }
 
-    //TODO Implement credit request
     //http://localhost:8080/spotaccount/credit?email=<email>&iban=<iban>&amount=<amount>
     @PutMapping("/credit")
     public ResponseEntity<SpotAccount> credit(@RequestParam String email,
-                                          @RequestParam String iban,
-                                          @RequestParam double amount,
-                                          @RequestBody SpotAccount spotAccount) {
-
-        HttpStatus status = OK;
-
-        return new ResponseEntity<>(spotAccount, status);
-    }
-
-    //TODO Implement withdraw request
-    //http://localhost:8080/spotaccount/withdraw?email=<email>&iban=<iban>&amount=<amount>
-    @PutMapping("/withdraw")
-    public ResponseEntity<SpotAccount> withdraw(@RequestParam String email,
                                               @RequestParam String iban,
                                               @RequestParam double amount,
                                               @RequestBody SpotAccount spotAccount) {
 
-        HttpStatus status = OK;
+        HttpStatus status;
 
+        String request = "Credit " + amount + " " + spotAccount.getCurrency() + " from " + iban;
+        email = email.toLowerCase();
+        acknowledgeRequest(request, email);
+
+        if (emailIsValid(email) && ibanIsValid(iban)) {
+
+            spotAccount = spotAccountService.credit(email, iban, spotAccount.getCurrency(), amount);
+
+            if (spotAccount != null) {
+                status = OK;
+            } else {
+                log.error("Could not credit spot account.");
+                status = INTERNAL_SERVER_ERROR;
+            }
+        } else {
+            log.error("Invalid parameters.");
+            status = BAD_REQUEST;
+            spotAccount = null;
+        }
         return new ResponseEntity<>(spotAccount, status);
     }
 
+
+    //http://localhost:8080/spotaccount/withdraw?email=<email>&iban=<iban>&amount=<amount>
+    @PutMapping("/withdraw")
+    public ResponseEntity<SpotAccount> withdraw(@RequestParam String email,
+                                                @RequestParam String iban,
+                                                @RequestParam double amount,
+                                                @RequestBody SpotAccount spotAccount) {
+
+        HttpStatus status;
+
+        String request = "Withdraw " + amount + " " + spotAccount.getCurrency() + " to " + iban;
+        email = email.toLowerCase();
+        acknowledgeRequest(request, email);
+
+        if (emailIsValid(email) && ibanIsValid(iban)) {
+
+            spotAccount = spotAccountService.withdraw(email, iban, spotAccount.getCurrency(), amount);
+
+            if (spotAccount != null) {
+                status = OK;
+            } else {
+                log.error("Could not withdraw to bank account (funds may be insufficient).");
+                status = INTERNAL_SERVER_ERROR;
+            }
+        } else {
+            log.error("Invalid parameters.");
+            status = BAD_REQUEST;
+            spotAccount = null;
+        }
+        return new ResponseEntity<>(spotAccount, status);
+    }
 
 }

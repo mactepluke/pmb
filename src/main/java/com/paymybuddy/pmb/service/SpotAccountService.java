@@ -18,11 +18,16 @@ public class SpotAccountService implements ISpotAccountService {
 
     private final SpotAccountRepository spotAccountRepository;
     private final IPmbUserService pmbUserService;
+    private final IBankAccountService bankAccountService;
 
     @Autowired
-    public SpotAccountService(SpotAccountRepository spotAccountRepository, IPmbUserService pmbUserService) {
+    public SpotAccountService(SpotAccountRepository spotAccountRepository,
+                              IPmbUserService pmbUserService,
+                              IBankAccountService bankAccountService
+    ) {
         this.spotAccountRepository = spotAccountRepository;
         this.pmbUserService = pmbUserService;
+        this.bankAccountService = bankAccountService;
     }
 
 
@@ -79,7 +84,7 @@ public class SpotAccountService implements ISpotAccountService {
         SpotAccount spotAccount = getByUserAndCurrency(pmbUserService.getByEmail(email), currency);
 
         if ((spotAccount != null) && spotAccount.getCredit() == 0) {
-                spotAccountRepository.delete(spotAccount);
+            spotAccountRepository.delete(spotAccount);
         }
         return spotAccount;
     }
@@ -88,6 +93,56 @@ public class SpotAccountService implements ISpotAccountService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public SpotAccount update(SpotAccount spotAccount) {
         return spotAccountRepository.save(spotAccount);
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public SpotAccount credit(String email, String iban, String currency, double amount) {
+
+        SpotAccount spotAccount = null;
+        PmbUser user = pmbUserService.getByEmail(email);
+        if (user != null)   {
+            spotAccount = getByUserAndCurrency(user, currency);
+        }
+
+        if (spotAccount != null)    {
+            if (bankAccountService.requestSwiftTransfer("CREDIT", iban, currency, amount)) {
+                spotAccount.setCredit(spotAccount.getCredit() + amount);
+                spotAccount = update(spotAccount);
+            } else {
+                spotAccount = null;
+            }
+        }
+
+        return spotAccount;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public SpotAccount withdraw(String email, String iban, String currency, double amount) {
+
+        SpotAccount spotAccount = null;
+        PmbUser user = pmbUserService.getByEmail(email);
+        if (user != null)   {
+            spotAccount = getByUserAndCurrency(user, currency);
+        }
+
+        if ((spotAccount != null) && (spotAccount.getCredit() >= amount))     {
+
+            if (bankAccountService.requestSwiftTransfer("WITHDRAWAL", iban, currency, amount)) {
+
+                double newAmount = spotAccount.getCredit() - amount;
+                if (newAmount < 0)  {
+                    newAmount = 0;
+                }
+                spotAccount.setCredit(newAmount);
+                spotAccount = update(spotAccount);
+
+            } else {
+                spotAccount = null;
+            }
+        }
+        return spotAccount;
     }
 
 }

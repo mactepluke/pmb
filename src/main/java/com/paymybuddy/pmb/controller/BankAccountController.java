@@ -101,10 +101,10 @@ public class BankAccountController extends PmbController {
         bankAccount = bankAccountService.delete(email, iban);
 
         if (bankAccount != null) {
-            log.debug("Bank account with IBAN {} deleted.", iban);
+            log.info("Bank account with IBAN {} deleted.", iban);
             status = OK;
         } else {
-            log.debug("Cannot delete bank account: resource does not exist.");
+            log.error("Cannot delete bank account: resource does not exist.");
             status = NO_CONTENT;
         }
 

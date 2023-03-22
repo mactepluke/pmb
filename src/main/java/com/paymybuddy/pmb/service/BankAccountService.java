@@ -75,4 +75,18 @@ public class BankAccountService implements IBankAccountService {
         return bankAccount;
     }
 
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public boolean requestSwiftTransfer(String transaction, String iban, String currency, double amount) {
+
+        if (transaction.equals("CREDIT") || transaction.equals("WITHDRAWAL")) {
+
+            log.info("--MOCK-- Requesting SWIFT {} transaction to {} for {} {}", transaction, iban, amount, currency);
+            log.info("--MOCK-- SWIFT request approved.");
+
+            return true;
+        }
+        return false;
+    }
+
 }
