@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -46,6 +47,12 @@ public class BankAccountService implements IBankAccountService {
                 bankAccount = new BankAccount(pmbUser, name, iban);
                 bankAccount = bankAccountRepository.save(bankAccount);
                 created = true;
+            } else if (!bankAccount.isEnabled()) {
+                bankAccount.setName(name);
+                bankAccount.setEnabled(true);
+                bankAccount = bankAccountRepository.save(bankAccount);
+            } else {
+                bankAccount = null;
             }
         }
         return new Wrap.Wrapper<BankAccount, Boolean>().put(bankAccount).setTag(created).wrap();
@@ -70,9 +77,16 @@ public class BankAccountService implements IBankAccountService {
         BankAccount bankAccount = getByUserAndIban(user, iban);
 
         if (bankAccount != null) {
-            bankAccountRepository.delete(bankAccount);
+            bankAccount.setEnabled(false);
+            bankAccount = update(bankAccount);
         }
         return bankAccount;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public BankAccount update(BankAccount bankAccount) {
+        return bankAccountRepository.save(bankAccount);
     }
 
     @Override
@@ -87,6 +101,11 @@ public class BankAccountService implements IBankAccountService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<BankAccount> getAllEnabled(String email) {
+        return bankAccountRepository.findAllByPmbUserAndEnabled(pmbUserService.getByEmail(email), true);
     }
 
 }

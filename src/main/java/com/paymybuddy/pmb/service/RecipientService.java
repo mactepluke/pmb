@@ -31,11 +31,12 @@ public class RecipientService implements IRecipientService {
     @Transactional(readOnly = true)
     public List<PmbUser> getAllEnabledAndExisting(String email) {
 
-        List<Recipient> recipients = recipientRepository.findAllByPmbUserAndEnabled(pmbUserService.getByEmail(email), true);
+        List<Recipient> recipients = recipientRepository.findAllByPmbUserAndEnabled(pmbUserService.getByEmailAndEnabled(email), true);
         List<PmbUser> existingRecipients = new ArrayList<>();
 
         for(Recipient recipient: recipients)  {
             Optional<PmbUser> recipientUser = pmbUserService.getById(recipient.getRecipientPmbUser().getUserId());
+
             recipientUser.ifPresent(existingRecipients::add);
         }
         return existingRecipients;
@@ -61,8 +62,8 @@ public class RecipientService implements IRecipientService {
 
         if (!userEmail.equals(recipientEmail)) {
 
-            PmbUser pmbUser = pmbUserService.getByEmail(userEmail);
-            PmbUser recipientUser = pmbUserService.getByEmail(recipientEmail);
+            PmbUser pmbUser = pmbUserService.getByEmailAndEnabled(userEmail);
+            PmbUser recipientUser = pmbUserService.getByEmailAndEnabled(recipientEmail);
 
             if ((pmbUser != null) && (recipientUser != null)) {
 

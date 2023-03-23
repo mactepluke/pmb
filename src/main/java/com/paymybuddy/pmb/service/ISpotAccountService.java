@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface ISpotAccountService {
+
     @Transactional(readOnly = true)
     List<SpotAccount> getAll(String email);
 
@@ -27,9 +28,6 @@ public interface ISpotAccountService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     SpotAccount update(SpotAccount spotAccount);
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    SpotAccount credit(String email, String iban, String currency, double amount);
-
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    SpotAccount withdraw(String email, String iban, String currency, double amount);
+    @Transactional(readOnly = true)
+    List<SpotAccount> getAllEnabled(String email);
 }

@@ -111,7 +111,7 @@ public class RecipientController extends PmbController {
         recipient = recipientService.delete(email, recipientEmail);
 
         if (recipient != null) {
-            log.info("Recipient with email {} deleted (i.e disabled).", recipientEmail);
+            log.info("Recipient with email {} deleted.", recipientEmail);
             status = OK;
         } else {
             log.error("Cannot delete recipient: resource does not exist.");

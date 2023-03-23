@@ -91,8 +91,8 @@ public class PaymentService implements IPaymentService {
 
         if (netAmount > 0 && !emitterEmail.equals(receiverEmail)) {
 
-            PmbUser emitterUser = pmbUserService.getByEmail(emitterEmail);
-            PmbUser recipientUser = pmbUserService.getByEmail(receiverEmail);
+            PmbUser emitterUser = pmbUserService.getByEmailAndEnabled(emitterEmail);
+            PmbUser recipientUser = pmbUserService.getByEmailAndEnabled(receiverEmail);
             Recipient recipient = null;
 
             if (recipientUser != null) {

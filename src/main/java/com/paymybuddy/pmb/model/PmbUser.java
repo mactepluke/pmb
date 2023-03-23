@@ -18,6 +18,10 @@ public class PmbUser {
 
     private static final String DEFAULT_VALUE = "";
 
+    public PmbUser()    {
+        this.enabled = true;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
@@ -48,6 +52,11 @@ public class PmbUser {
     @Getter
     @Setter
     private boolean verified = false;
+
+    @Column(name = "ENABLED")
+    @Getter
+    @Setter
+    private boolean enabled;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

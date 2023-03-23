@@ -12,7 +12,9 @@ import lombok.ToString;
 public class SpotAccount {
 
     protected SpotAccount() {
+        this.enabled = true;
     }
+
     public SpotAccount(PmbUser pmbUser, String currency)    {
         this.setPmbUser(pmbUser);
 
@@ -25,6 +27,7 @@ public class SpotAccount {
 
         this.setCurrency(currency);
         this.setCredit(0);
+        this.enabled = true;
     }
 
     @Id
@@ -42,6 +45,11 @@ public class SpotAccount {
     @Getter
     @Setter
     private double credit;
+
+    @Column(name = "ENABLED")
+    @Getter
+    @Setter
+    private boolean enabled;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

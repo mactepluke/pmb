@@ -32,6 +32,8 @@ public class PmbUserService implements IPmbUserService {
             pmbUser.setEmail(email);
             pmbUser.setPassword(password);
             pmbUser = pmbUserRepository.save(pmbUser);
+        } else if (!pmbUser.isEnabled()) {
+            pmbUser.setEnabled(true);
         } else {
             pmbUser = null;
         }
@@ -42,7 +44,7 @@ public class PmbUserService implements IPmbUserService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public PmbUser update(String email, PmbUser newUser) {
 
-        PmbUser pmbUser = getByEmail(email);
+        PmbUser pmbUser = getByEmailAndEnabled(email);
 
         if (pmbUser != null)    {
             pmbUser.setEmail(newUser.getEmail());
@@ -51,6 +53,7 @@ public class PmbUserService implements IPmbUserService {
             pmbUser.setLastName(newUser.getLastName());
             pmbUser = pmbUserRepository.save(pmbUser);
         }
+
         return pmbUser;
     }
 
@@ -64,6 +67,12 @@ public class PmbUserService implements IPmbUserService {
     @Transactional(readOnly = true)
     public Optional<PmbUser> getById(Integer userId) {
         return pmbUserRepository.findById(userId );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PmbUser getByEmailAndEnabled(String email) {
+        return pmbUserRepository.findByEmailAndEnabled(email, true);
     }
 
 }

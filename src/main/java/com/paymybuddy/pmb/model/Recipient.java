@@ -17,6 +17,7 @@ import java.util.List;
 public class Recipient {
 
     protected Recipient() {
+        this.enabled = true;
     }
 
     public Recipient(PmbUser pmbUser, PmbUser recipientPmbUser) {

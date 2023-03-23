@@ -77,7 +77,7 @@ public class BankAccountController extends PmbController {
         acknowledgeRequest(request, email);
 
         if (emailIsValid(email)) {
-            bankAccounts = bankAccountService.getAll(email);
+            bankAccounts = bankAccountService.getAllEnabled(email);
             status = checkFindAllResult(request, bankAccounts.size());
         } else {
             status = BAD_REQUEST;

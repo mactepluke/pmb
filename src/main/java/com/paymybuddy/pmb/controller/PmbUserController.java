@@ -73,7 +73,7 @@ public class PmbUserController extends PmbController {
 
         if (emailIsValid(email) && passwordIsValid(password)) {
 
-            pmbUser = pmbUserService.getByEmail(email);
+            pmbUser = pmbUserService.getByEmailAndEnabled(email);
 
             if (pmbUser == null) {
                 log.error("No user found with email: {}", email);

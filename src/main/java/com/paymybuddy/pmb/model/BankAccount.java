@@ -12,12 +12,15 @@ import lombok.ToString;
 public class BankAccount {
 
     protected BankAccount() {
+        this.enabled = true;
     }
+
     public BankAccount(PmbUser pmbUser, String name, String iban)    {
         this.setPmbUser(pmbUser);
         this.setName(name);
         this.setIban(iban);
         this.setVerified(false);
+        this.enabled = true;
     }
 
     @Id
@@ -40,6 +43,11 @@ public class BankAccount {
     @Getter
     @Setter
     private boolean verified = false;
+
+    @Column(name = "ENABLED")
+    @Getter
+    @Setter
+    private boolean enabled;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

@@ -18,18 +18,14 @@ public class SpotAccountService implements ISpotAccountService {
 
     private final SpotAccountRepository spotAccountRepository;
     private final IPmbUserService pmbUserService;
-    private final IBankAccountService bankAccountService;
 
     @Autowired
     public SpotAccountService(SpotAccountRepository spotAccountRepository,
-                              IPmbUserService pmbUserService,
-                              IBankAccountService bankAccountService
+                              IPmbUserService pmbUserService
     ) {
         this.spotAccountRepository = spotAccountRepository;
         this.pmbUserService = pmbUserService;
-        this.bankAccountService = bankAccountService;
     }
-
 
     @Override
     @Transactional
@@ -50,10 +46,12 @@ public class SpotAccountService implements ISpotAccountService {
 
             if (spotAccount == null) {
                 spotAccount = new SpotAccount(pmbUser, currency);
-
                 spotAccount = spotAccountRepository.save(spotAccount);
-
                 created = true;
+            } else if (!spotAccount.isEnabled()) {
+                spotAccount.setEnabled(true);
+            } else {
+                spotAccount = null;
             }
         }
         return new Wrap.Wrapper<SpotAccount, Boolean>().put(spotAccount).setTag(created).wrap();
@@ -81,10 +79,14 @@ public class SpotAccountService implements ISpotAccountService {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public SpotAccount delete(String email, String currency) {
-        SpotAccount spotAccount = getByUserAndCurrency(pmbUserService.getByEmail(email), currency);
+        PmbUser pmbUser = pmbUserService.getByEmailAndEnabled(email);
+        SpotAccount spotAccount = getByUserAndCurrency(pmbUser, currency);
 
-        if ((spotAccount != null) && spotAccount.getCredit() == 0) {
-            spotAccountRepository.delete(spotAccount);
+        if (spotAccount != null && spotAccount.getCredit() == 0 && getAllEnabled(email).size() > 1) {
+            spotAccount.setEnabled(false);
+            spotAccount = update(spotAccount);
+        } else {
+            spotAccount = null;
         }
         return spotAccount;
     }
@@ -96,53 +98,9 @@ public class SpotAccountService implements ISpotAccountService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    public SpotAccount credit(String email, String iban, String currency, double amount) {
-
-        SpotAccount spotAccount = null;
-        PmbUser user = pmbUserService.getByEmail(email);
-        if (user != null)   {
-            spotAccount = getByUserAndCurrency(user, currency);
-        }
-
-        if (spotAccount != null)    {
-            if (bankAccountService.requestSwiftTransfer("CREDIT", iban, currency, amount)) {
-                spotAccount.setCredit(spotAccount.getCredit() + amount);
-                spotAccount = update(spotAccount);
-            } else {
-                spotAccount = null;
-            }
-        }
-
-        return spotAccount;
-    }
-
-    @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
-    public SpotAccount withdraw(String email, String iban, String currency, double amount) {
-
-        SpotAccount spotAccount = null;
-        PmbUser user = pmbUserService.getByEmail(email);
-        if (user != null)   {
-            spotAccount = getByUserAndCurrency(user, currency);
-        }
-
-        if ((spotAccount != null) && (spotAccount.getCredit() >= amount))     {
-
-            if (bankAccountService.requestSwiftTransfer("WITHDRAWAL", iban, currency, amount)) {
-
-                double newAmount = spotAccount.getCredit() - amount;
-                if (newAmount < 0)  {
-                    newAmount = 0;
-                }
-                spotAccount.setCredit(newAmount);
-                spotAccount = update(spotAccount);
-
-            } else {
-                spotAccount = null;
-            }
-        }
-        return spotAccount;
+    @Transactional(readOnly = true)
+    public List<SpotAccount> getAllEnabled(String email) {
+        return spotAccountRepository.findAllByPmbUserAndEnabled(pmbUserService.getByEmail(email), true);
     }
 
 }

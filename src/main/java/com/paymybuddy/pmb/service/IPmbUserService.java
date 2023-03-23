@@ -18,4 +18,7 @@ public interface IPmbUserService {
 
     @Transactional(readOnly = true)
     Optional<PmbUser> getById(Integer recipientId);
+
+    @Transactional(readOnly = true)
+    PmbUser getByEmailAndEnabled(String email);
 }

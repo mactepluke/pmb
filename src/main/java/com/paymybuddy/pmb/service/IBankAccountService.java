@@ -26,5 +26,11 @@ public interface IBankAccountService {
     BankAccount delete(String email, String iban);
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
+    BankAccount update(BankAccount bankAccount);
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     boolean requestSwiftTransfer(String transaction, String iban, String currency, double amount);
+
+    @Transactional(readOnly = true)
+    List<BankAccount> getAllEnabled(String email);
 }
