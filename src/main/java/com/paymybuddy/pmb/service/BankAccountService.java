@@ -28,7 +28,7 @@ public class BankAccountService implements IBankAccountService {
 
     @Override
     @Transactional(readOnly = true)
-    public ArrayList<BankAccount> getAll(String email) {
+    public ArrayList<BankAccount> getAllByUser(String email) {
         return bankAccountRepository.findAllByPmbUser(pmbUserService.getByEmail(email));
     }
 
@@ -51,8 +51,7 @@ public class BankAccountService implements IBankAccountService {
                 bankAccount.setName(name);
                 bankAccount.setEnabled(true);
                 bankAccount = bankAccountRepository.save(bankAccount);
-            } else {
-                bankAccount = null;
+                created = true;
             }
         }
         return new Wrap.Wrapper<BankAccount, Boolean>().put(bankAccount).setTag(created).wrap();

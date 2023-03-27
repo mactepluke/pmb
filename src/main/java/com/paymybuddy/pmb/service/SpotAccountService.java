@@ -50,8 +50,7 @@ public class SpotAccountService implements ISpotAccountService {
                 created = true;
             } else if (!spotAccount.isEnabled()) {
                 spotAccount.setEnabled(true);
-            } else {
-                spotAccount = null;
+                created = true;
             }
         }
         return new Wrap.Wrapper<SpotAccount, Boolean>().put(spotAccount).setTag(created).wrap();

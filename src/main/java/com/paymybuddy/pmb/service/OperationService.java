@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class OperationService implements IOperationService {
@@ -108,4 +110,26 @@ public class OperationService implements IOperationService {
         }
         return operation;
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Operation> getAllOperations(String email) {
+
+        List<Operation> operations = new ArrayList<>();
+        List<BankAccount> bankAccounts;
+
+        bankAccounts = bankAccountService.getAllByUser(email);
+
+        for (BankAccount bankAccount : bankAccounts) {
+            operations.addAll(operationRepository.findAllByBankAccount(bankAccount));
+        }
+
+        for (Operation operation : operations) {
+            operation.setBankAccountIban(operation.getBankAccount().getIban());
+            operation.setSpotAccountCurrency(operation.getSpotAccount().getCurrency());
+        }
+
+        return operations;
+    }
+
 }

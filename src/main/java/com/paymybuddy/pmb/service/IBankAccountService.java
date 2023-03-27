@@ -11,7 +11,7 @@ import java.util.List;
 public interface IBankAccountService {
 
     @Transactional(readOnly = true)
-    List<BankAccount> getAll(String email);
+    List<BankAccount> getAllByUser(String email);
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     Wrap<BankAccount, Boolean> create(String email, String name, String iban);

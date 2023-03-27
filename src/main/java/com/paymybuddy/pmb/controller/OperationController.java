@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.http.HttpStatus.*;
 
 @Log4j2
@@ -90,6 +92,26 @@ public class OperationController extends PmbController {
             operation = null;
         }
         return new ResponseEntity<>(operation, status);
+    }
+
+
+    //http://localhost:8080/operation/findAll/<email>
+    @GetMapping("/findAll/{email}")
+    public ResponseEntity<List<Operation>> findAll(@PathVariable String email) {
+
+        HttpStatus status;
+        List<Operation> operations = null;
+        String request = "Find all payments";
+
+        acknowledgeRequest(request, email);
+
+        if (emailIsValid(email)) {
+            operations = operationService.getAllOperations(email);
+            status = checkFindAllResult(request, operations.size());
+        } else {
+            status = BAD_REQUEST;
+        }
+        return new ResponseEntity<>(operations, status);
     }
 
 }

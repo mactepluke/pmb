@@ -77,7 +77,6 @@ public class RecipientService implements IRecipientService {
                     recipient.setEnabled(true);
                     response = "ENABLED";
                 }
-
             } else {
                 response = "NOTFOUND";
             }
