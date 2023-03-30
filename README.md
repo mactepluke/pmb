@@ -1,52 +1,13 @@
 
-Conceptual Data Model
+**Conceptual Data Model**
 
-```mermaid
-erDiagram
-    USER ||--o{ FRIEND : has;
-    USER ||--|{ SPOT_ACCOUNT : has;
-    USER ||--o{ TRANSACTION : perform;
-    FRIEND ||--o{ TRANSACTION : perform;
-    USER ||--o{ BANK_ACCOUNT : owns;
+![](Conceptual%20Data%20Model.png)
 
-    USER {
-        int id
-        string email
-        boolean verified
-        string firstName
-        string lastName
-}
-SPOT_ACCOUNT {
-    int id
-    string currency
-    double credit
-}
-FRIEND  {
-    int id
-    int friendOwner
-    int friendTarget
-}
+**Relational Data Model**
 
-BANK_ACCOUNT    {
-    int id
-    string name
-    string iban
-    boolean verified
-}
+![](Relational%20Data%20Model.png)
 
-TRANSACTION {
-    int id
-    id sender
-    id receiver
-    double rawAmount
-    double netAmount
-    double fee
-    datetime dateTime
-    boolean processed
-}
-```
-
-Relational Data Model
+Alternatively, paste this into mermaid.live:
 
 ```mermaid
 erDiagram
