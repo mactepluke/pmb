@@ -42,7 +42,7 @@ public class Payment {
     @Column(name = "FEE_PERCENT")
     @Getter
     @Setter
-    private int feePercent;
+    private double feePercent;
 
     @Column(name = "CURRENCY")
     @Getter

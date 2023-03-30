@@ -21,7 +21,7 @@ import static java.lang.Math.round;
 @Service
 public class PaymentService implements IPaymentService {
 
-    private static final int FEE_PERCENT = 3;
+    private static final double FEE_PERCENT = 0.5;
 
     private final PaymentRepository paymentRepository;
     private final IPmbUserService pmbUserService;
