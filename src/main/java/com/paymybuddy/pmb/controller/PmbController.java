@@ -70,7 +70,7 @@ public abstract class PmbController {
         }
 
         if (string.length() > maxLength) {
-            string = string.substring(0, maxLength-1);
+            string = string.substring(0, maxLength);
         }
         return string;
     }
